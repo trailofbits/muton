@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: muton-x86_64-linux
+            arch: x86_64-unknown-linux-musl
+            binary_name: muton-x86_64-linux
+            os: ubuntu-latest
+          - target: muton-aarch64-linux
+            arch: aarch64-unknown-linux-musl
+            binary_name: muton-aarch64-linux
+            os: ubuntu-latest
+          - target: muton-aarch64-darwin
+            arch: aarch64-apple-darwin
+            binary_name: muton-aarch64-darwin
+            os: macos-14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Enable Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build binary
+        run: nix build .#${{ matrix.target }}
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Prepare binary for upload
+        run: |
+          mkdir -p artifacts
+          # Copy binary and rename with version and architecture
+          cp result/bin/${{ matrix.binary_name }} artifacts/
+          cd artifacts
+          # Rename to include version and full architecture specification
+          mv ${{ matrix.binary_name }} muton-${{ steps.version.outputs.VERSION }}-${{ matrix.arch }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: muton-${{ steps.version.outputs.VERSION }}-${{ matrix.arch }}
+          path: artifacts/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*/muton-*
+          name: Release v${{ steps.version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

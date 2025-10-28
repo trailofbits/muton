@@ -1,0 +1,26 @@
+# Local storage
+.env
+.direnv
+data/
+*.sqlite
+*.sqlite-*
+muton.toml
+
+# Cache
+.cargo
+
+# Compiled output
+/target
+result
+
+# IDEs and editors
+*.sw[opq]
+.vscode
+
+# Logs
+*.log
+*.tmp.*
+
+# OS
+.bash_history
+.DS_Store
