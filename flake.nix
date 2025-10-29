@@ -1,7 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     utils.url = "github:numtide/flake-utils";
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
@@ -12,11 +11,6 @@
 
   outputs = inputs: with inputs;
     utils.lib.eachDefaultSystem (buildSystem: let
-      unstable = import nixpkgs-unstable {
-        system = buildSystem;
-        config.allowUnfree = true;
-      };
-
       libc = "musl"; # "gnu" or "musl"
       targets = {
         "x86_64-linux" = "x86_64-unknown-linux-${libc}";
@@ -140,7 +134,6 @@
 
       devInputs = with pkgs; [
         cargo-watch
-        unstable.code-cursor
         libiconv
         openssl
         pkg-config
