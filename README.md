@@ -9,7 +9,7 @@
 
 ### Prebuilt binaries (recommended)
 
-1. Download the latest release from [GitHub Releases](https://github.com/crytic/muton/releases).
+1. Download the latest release from [GitHub Releases](https://github.com/trailofbits/muton/releases).
 2. Choose the artifact that matches your system:
    - macOS (Apple Silicon): `muton-aarch64-darwin`
    - Linux x86_64: `muton-x86_64-linux`
