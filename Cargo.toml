@@ -2,10 +2,16 @@
 name = "muton"
 version = "1.0.0"
 edition = "2024"
+repository = "https://github.com/trailofbits/muton"
 
 [[bin]]
 name = "muton"
 path = "src/main.rs"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
 
 [dependencies]
 chrono = "0.4.41"
