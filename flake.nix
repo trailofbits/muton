@@ -134,10 +134,12 @@
 
       devInputs = with pkgs; [
         cargo-watch
+        cargo-dist
         libiconv
         openssl
         pkg-config
         rlwrap
+        rustup
         sqlite
         sqlx-cli
         tailwindcss
