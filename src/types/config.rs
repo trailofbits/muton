@@ -99,11 +99,10 @@ pub fn config() -> &'static GlobalConfig {
     CONFIG.get_or_init(|| {
         let mut cfg = default_global_config();
         // Apply nearest config file found by walking up from cwd, then env
-        if let Some(path) = find_nearest_config_file() {
-            if let Some(file_cfg) = read_config_file(&path) {
+        if let Some(path) = find_nearest_config_file()
+            && let Some(file_cfg) = read_config_file(&path) {
                 apply_file_config(&mut cfg, &file_cfg);
             }
-        }
         apply_env_overrides(&mut cfg);
         cfg
     })
@@ -113,11 +112,10 @@ pub fn init_with_overrides(overrides: &CliOverrides) {
     let mut cfg = default_global_config();
 
     // 1) Config file: walk up from cwd and use the first muton.toml found
-    if let Some(path) = find_nearest_config_file() {
-        if let Some(file_cfg) = read_config_file(&path) {
+    if let Some(path) = find_nearest_config_file()
+        && let Some(file_cfg) = read_config_file(&path) {
             apply_file_config(&mut cfg, &file_cfg);
         }
-    }
 
     // 2) Environment variables
     apply_env_overrides(&mut cfg);

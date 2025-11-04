@@ -1,8 +1,10 @@
 [package]
 name = "muton"
 version = "1.0.0"
-edition = "2024"
+description = "Mutation testing framework for TON smart contracts"
 repository = "https://github.com/trailofbits/muton"
+homepage = "https://github.com/trailofbits/muton"
+edition = "2024"
 
 [[bin]]
 name = "muton"
