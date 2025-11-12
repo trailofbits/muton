@@ -1,6 +1,5 @@
 project := "muton"
 export SQLITE_FILE := project + ".sqlite"
-export DATABASE_URL := "sqlite:" + SQLITE_FILE
 
 ########################################
 # Common dev commands
@@ -20,15 +19,8 @@ fmt:
 ########################################
 # Database
 
-init-db:
-  command -v sqlx >/dev/null 2>&1 || cargo install sqlx-cli
-  touch {{SQLITE_FILE}}
-  cargo sqlx migrate run
-  cargo sqlx prepare
-
 reset-db:
   rm -f {{SQLITE_FILE}}
-  just init-db
 
 db:
   rlwrap sqlite3 -table {{SQLITE_FILE}} || true
@@ -38,10 +30,10 @@ db:
 
 build-all: build build-nix build-x86_64-linux build-aarch64-linux build-aarch64-darwin build-docs
 
-build: init-db
+build:
   cargo build --bin muton
 
-build-nix: init-db
+build-nix:
   nix build .#muton
 
 build-x86_64-linux:
@@ -62,17 +54,17 @@ build-docs:
 test:
   cargo test
 
-remutate: reset-db
-  cargo run --bin muton -- mutate tests/examples/func/hello-world.fc
+mutate lang:
+  cargo run --bin {{project}} -- mutate tests/{{lang}}/examples
 
-mutate:
-  cargo run --bin muton -- mutate tests/examples/func/hello-world.fc
+remutate lang: reset-db
+  just mutate {{lang}}
 
-rerun: reset-db
-  cargo run --bin muton -- run tests/examples --test-cmd "sleep 1; echo test passed"
+run lang:
+  cargo run --bin {{project}} -- run tests/{{lang}}/examples --test-cmd "sleep 1; echo test passed"
 
-run:
-  cargo run --bin muton -- run tests/examples --test-cmd "sleep 1; echo test passed"
+rerun lang: reset-db
+  just run {{lang}}
 
 ########################################
 # Nix Installation

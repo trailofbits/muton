@@ -4,6 +4,12 @@ fn build_grammar(dir: &PathBuf, lib_name: &str) {
     let mut build = cc::Build::new();
     build.include(dir).file(dir.join("parser.c"));
 
+    // Include external scanner if present (required by some grammars)
+    let scanner_c = dir.join("scanner.c");
+    if scanner_c.exists() {
+        build.file(scanner_c.clone());
+    }
+
     // Suppress the specific warning from vendored tree-sitter code
     if build.get_compiler().is_like_clang() || build.get_compiler().is_like_gnu() {
         build.flag("-Wno-unused-but-set-variable");
@@ -17,8 +23,12 @@ fn build_grammar(dir: &PathBuf, lib_name: &str) {
     println!("cargo:rustc-link-search=native={out_dir}");
     println!("cargo:rustc-link-arg={out_dir}/lib{lib_name}.a");
 
-    // Tell cargo to rerun if the parser source changes
+    // Tell cargo to rerun if the parser/scanner source changes
     println!("cargo:rerun-if-changed={}", dir.join("parser.c").display());
+    let scanner_c = dir.join("scanner.c");
+    if scanner_c.exists() {
+        println!("cargo:rerun-if-changed={}", scanner_c.display());
+    }
 }
 
 fn main() {
@@ -39,10 +49,10 @@ fn main() {
     }
 
     // Build FunC grammar
-    let func_dir: PathBuf = ["grammar", "func", "src"].iter().collect();
+    let func_dir: PathBuf = ["grammars", "func", "src"].iter().collect();
     build_grammar(&func_dir, "tree-sitter-func");
 
     // Build Tact grammar
-    let tact_dir: PathBuf = ["grammar", "tact", "src"].iter().collect();
+    let tact_dir: PathBuf = ["grammars", "tact", "src"].iter().collect();
     build_grammar(&tact_dir, "tree-sitter-tact");
 }

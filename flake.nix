@@ -134,7 +134,6 @@
 
       devInputs = with pkgs; [
         cargo-watch
-        # cargo-dist
         libiconv
         openssl
         pkg-config
@@ -153,7 +152,6 @@
           shellHook = ''
             export CARGO_HOME=$(pwd)/.cargo
             export PATH="$CARGO_HOME/bin:$PATH"
-            export DATABASE_URL="sqlite:muton.sqlite"
           '';
         };
       };

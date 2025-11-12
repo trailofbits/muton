@@ -1,7 +1,7 @@
 [package]
 name = "muton"
 version = "1.0.0"
-description = "Mutation testing framework for TON smart contracts"
+description = "Mutation testing framework for TON smart contracts (FunC and Tact)"
 repository = "https://github.com/trailofbits/muton"
 homepage = "https://github.com/trailofbits/muton"
 edition = "2024"
@@ -10,39 +10,16 @@ edition = "2024"
 name = "muton"
 path = "src/main.rs"
 
-# The profile that 'dist' will build with
-[profile.dist]
-inherits = "release"
-lto = "thin"
-
 [dependencies]
-chrono = "0.4.41"
-clap = { version = "4.5.37", features = ["derive"] }
-console = "0.16"
-ctrlc = { version = "3.4.6", features = ["termination"] }
-dirs-next = "2.0"
-fern = "0.7.1"
-globset = "0.4"
-hex = "0.4.3"
-indicatif = "0.18"
-log = "0.4.28"
-once_cell = "1.19"
-regex = { version = "1.11.1" }
-serde = { version = "1.0", features = ["derive"] }
-sha2 = "0.10.9"
-similar = { version = "2.4.0", features = ["inline", "unicode"] }
-sqlx = { version = "0.8.5", features = ["runtime-tokio", "sqlite"] }
-strum = { version = "0.27.1", features = ["derive"] }
-thiserror = "2.0.12"
-tokio = { version = "1.45.0", features = ["full"] }
-toml = "0.8"
+mewt = "1.0.0"
 tree-sitter = "0.25"
-
-[dev-dependencies]
-criterion = { version = "0.5", features = ["html_reports"] }
-tempfile = "3.12"
-pretty_assertions = "1.4"
-tokio-test = "0.4"
+tokio = { version = "1.45.0", features = ["full"] }
+log = "0.4.28"
 
 [build-dependencies]
 cc = "1.0"
+
+[dev-dependencies]
+tempfile = "3.12"
+pretty_assertions = "1.4"
+tokio-test = "0.4"

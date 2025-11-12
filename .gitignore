@@ -24,3 +24,6 @@ result
 # OS
 .bash_history
 .DS_Store
+
+# Agent Scratchpad
+PROMPT.md

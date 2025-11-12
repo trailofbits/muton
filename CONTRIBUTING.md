@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to `muton`!
+Thanks for your interest in contributing!
 
 ## Areas to contribute
 - Bug fixes

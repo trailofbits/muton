@@ -1,2 +1,0 @@
-mod tact;
-mod func; 
