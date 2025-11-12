@@ -7,19 +7,27 @@
 
 ## Installation
 
-### Prebuilt binaries (recommended)
-
-1. Download the latest release from [GitHub Releases](https://github.com/trailofbits/muton/releases).
-2. Choose the artifact that matches your system:
-   - macOS (Apple Silicon): `muton-aarch64-darwin`
-   - Linux x86_64: `muton-x86_64-linux`
-   - Linux aarch64: `muton-aarch64-linux`
-3. Make it executable and put it on your `PATH` (example for Linux/macOS):
+### npm (recommended)
 
 ```bash
-chmod +x ./muton-*
-sudo mv ./muton-* /usr/local/bin/muton
-muton --help
+npm install @trailofbits/muton
+```
+
+### Prebuilt binaries
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/trailofbits/muton/releases/download/v1.0.0/muton-installer.sh | sh
+```
+
+### Build from source (via Nix)
+
+With Nix flakes enabled:
+
+```bash
+git clone https://github.com/trailofbits/muton.git
+cd muton
+nix develop --command bash -c 'just build' # or 'direnv allow' then 'just build'
+muton --version
 ```
 
 ### Build from source (native toolchain)
@@ -65,17 +73,6 @@ Optional (install into your cargo bin):
 cargo install --path . --locked --force
 muton --version
 ```
-
-### Build from source (via Nix)
-
-With Nix flakes enabled:
-
-```bash
-just install-nix
-muton --version
-```
-
-That’s it—choose whichever path fits your environment best. If you’re unsure, prebuilt binaries or the Nix path are the easiest.
 
 ## Quick start
 

@@ -84,5 +84,5 @@ uninstall-nix:
   nix profile remove muton
 
 reinstall-nix: uninstall-nix
-  just install
+  just install-nix
 
