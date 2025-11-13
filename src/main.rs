@@ -37,7 +37,7 @@ async fn main() -> MutonResult<()> {
         db: args.db.clone(),
         log_level: args.log_level.clone(),
         log_color: args.log_color.clone(),
-        ignore_targets: args.ignore_targets.clone(),
+        ignore_targets: args.ignore.clone(),
         mutations_slugs: match &args.command {
             Commands::Run(run_args) => run_args.mutations.clone(),
             _ => None,

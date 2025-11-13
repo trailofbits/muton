@@ -21,9 +21,9 @@ pub struct Args {
     #[arg(long, global = true)]
     pub log_color: Option<String>,
 
-    /// Comma-separated list of target path globs to ignore; merged additively across sources
+    /// Comma-separated substrings; any target path containing any will be ignored
     #[arg(long, global = true)]
-    pub ignore_targets: Option<String>,
+    pub ignore: Option<String>,
 
     #[command(subcommand)]
     pub command: Commands,

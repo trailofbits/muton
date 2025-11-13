@@ -13,7 +13,7 @@ pub struct LogFileConfig {
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct GeneralFileConfig {
     pub db: Option<String>,
-    pub ignore_targets: Option<Vec<String>>, // glob patterns
+    pub ignore_targets: Option<Vec<String>>, // substring patterns
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -45,7 +45,7 @@ pub struct LogConfig {
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GeneralConfig {
     pub db: String,                  // resolved db path; default "muton.sqlite"
-    pub ignore_targets: Vec<String>, // merged globs
+    pub ignore_targets: Vec<String>, // merged substrings
 }
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -319,19 +319,15 @@ pub fn is_slug_enabled(slug: &str) -> bool {
 }
 
 pub fn is_path_excluded(path: &Path) -> bool {
-    if config().general.ignore_targets.is_empty() {
+    let patterns = &config().general.ignore_targets;
+    if patterns.is_empty() {
         return false;
     }
-    let mut builder = globset::GlobSetBuilder::new();
-    for pat in &config().general.ignore_targets {
-        if let Ok(glob) = globset::Glob::new(pat) {
-            builder.add(glob);
-        }
-    }
-    let Ok(set) = builder.build() else {
-        return false;
-    };
-    set.is_match(PathBuf::from(path))
+    let path_str = path.to_string_lossy();
+    patterns
+        .iter()
+        .filter(|p| !p.is_empty())
+        .any(|pat| path_str.contains(pat))
 }
 
 pub fn resolve_test_for_path_with_cli(

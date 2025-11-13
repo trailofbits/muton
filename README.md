@@ -211,7 +211,7 @@ color = true               # optional boolean; omit for auto
 
 [general]
 db = "muton.sqlite"
-ignore_targets = ["**/build/**", "**/node_modules/**"]
+ignore_targets = ["build/", "node_modules/"]  # substring matches, not globs
 
 [mutations]
 slugs = ["ER", "CR"]      # global whitelist; overrides other sources if set/non-empty
@@ -227,6 +227,10 @@ Environment variables:
 - `MUTON_IGNORE_TARGETS` (CSV)
 - `MUTON_SLUGS` (CSV; highest non-empty wins)
 - `MUTON_TEST_CMD`, `MUTON_TEST_TIMEOUT`
+
+CLI:
+- `--ignore` (CSV): comma-separated substrings; any target path containing any will be ignored.
+  - Matching is substring-based, not glob-based. Example: `--ignore lib` excludes any path containing "lib". To be more specific, use `lib/`.
 
 ## Examples
 
