@@ -1,7 +1,38 @@
 use log::info;
 
 use crate::store::MutonStore;
-use crate::types::{Mutant, MutonResult, Outcome, Status, Target};
+use crate::types::{Mutant, MutonResult, Outcome, Status, Target, MutationSeverity};
+use crate::mutations::get_severity_by_slug;
+
+// Simple helper to track caught/eligible per severity (and overall)
+struct OutcomeCounter {
+    eligible: u32,
+    caught: u32,
+}
+
+impl OutcomeCounter {
+    fn new() -> Self {
+        Self {
+            eligible: 0,
+            caught: 0,
+        }
+    }
+    fn record(&mut self, status: &Status) {
+        if *status != Status::Skipped && *status != Status::BuildFail {
+            self.eligible += 1;
+            if *status == Status::TestFail {
+                self.caught += 1;
+            }
+        }
+    }
+    fn percent_caught(&self) -> f64 {
+        if self.eligible > 0 {
+            (self.caught as f64 / self.eligible as f64) * 100.0
+        } else {
+            0.0
+        }
+    }
+}
 
 // Print outcome details and verbose information if requested
 fn print_outcome(mutant: &Mutant, target: &Target, outcome: &Outcome, verbose: bool) {
@@ -84,19 +115,25 @@ pub async fn execute(
 
         // Retrieve outcomes for each mutant
         let mut has_outcomes = false;
-        let mut eligible_total: u32 = 0;
-        let mut caught_count: u32 = 0;
+        // Overall and per-severity tallies
+        let mut overall = OutcomeCounter::new();
+        let mut high = OutcomeCounter::new();
+        let mut medium = OutcomeCounter::new();
+        let mut low = OutcomeCounter::new();
         for mutant in mutants {
             // Get the outcome for this mutant
             if let Some(outcome) = store.get_outcome(mutant.id).await? {
-                // Update counters first (exclude Skipped and BuildFail from stats)
+                // Update counters first
                 let status = outcome.status.clone();
-                if status != Status::Skipped && status != Status::BuildFail {
-                    eligible_total += 1;
-                    if status == Status::TestFail {
-                        caught_count += 1;
-                    }
-                }
+                overall.record(&status);
+                // Severity buckets via mutation severity lookup
+                let severity = get_severity_by_slug(&mutant.mutation_slug, &target.language)
+                    .unwrap_or(MutationSeverity::Low);
+                match severity {
+                    MutationSeverity::High => high.record(&status),
+                    MutationSeverity::Medium => medium.record(&status),
+                    MutationSeverity::Low => low.record(&status),
+                };
 
                 // Show all outcomes if verbose, all flag is set, or only uncaught outcomes otherwise
                 if verbose || all || status == Status::Uncaught {
@@ -110,13 +147,31 @@ pub async fn execute(
             info!("  No outcomes found for this target");
         }
 
-        // Print summary percentage of caught mutants for this target
-        let percent = if eligible_total > 0 {
-            (caught_count as f64 / eligible_total as f64) * 100.0
-        } else {
-            0.0
-        };
-        info!("Caught: {percent:.1}% ({caught_count} / {eligible_total})");
+        // Print per-severity caught/missed lines
+        info!(
+            "High severity caught: {:.1}% ({} / {})",
+            high.percent_caught(),
+            high.caught,
+            high.eligible
+        );
+        info!(
+            "Medium severity caught: {:.1}% ({} / {})",
+            medium.percent_caught(),
+            medium.caught,
+            medium.eligible
+        );
+        info!(
+            "Low severity caught: {:.1}% ({} / {})",
+            low.percent_caught(),
+            low.caught,
+            low.eligible
+        );
+        info!(
+            "Total caught: {:.1}% ({} / {})",
+            overall.percent_caught(),
+            overall.caught,
+            overall.eligible
+        );
         info!(""); // Empty line between targets
     }
 
