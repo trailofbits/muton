@@ -1,4 +1,6 @@
-use mewt::types::{Language, Target, Hash};
+use mewt::types::{Target, Hash};
+use mewt::LanguageRegistry;
+use muton::languages::tact::engine::TactLanguageEngine;
 
 #[test]
 fn end_to_end_generate_mutants_tact() {
@@ -20,10 +22,14 @@ fn end_to_end_generate_mutants_tact() {
 		path,
 		file_hash: Hash::digest(source.to_string()),
 		text: source.to_string(),
-		language: Language::Tact,
+		language: "tact".to_string(),
 	};
 
-	let mutants = target.generate_mutants().expect("mutants");
+	// Create a language registry with the Tact engine
+	let mut registry = LanguageRegistry::new();
+	registry.register(TactLanguageEngine::new());
+
+	let mutants = target.generate_mutants(&registry).expect("mutants");
 	assert!(mutants.len() > 0, "expected at least one mutant");
 
 	// Mutating content should succeed

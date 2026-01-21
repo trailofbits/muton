@@ -1,5 +1,5 @@
-use mewt::mutations::func::engine::FuncMutationEngine;
-use mewt::types::{Language as MutationLanguage, Target};
+use muton::languages::func::engine::FuncLanguageEngine;
+use mewt::types::{Target, Hash};
 use std::collections::{HashMap, HashSet};
 use tempfile::tempdir;
 
@@ -11,9 +11,9 @@ fn create_test_target(content: &str) -> (tempfile::TempDir, Target) {
     let target = Target {
         id: 1,
         path: file_path,
-        file_hash: mewt::types::Hash::digest(content.to_string()),
+        file_hash: Hash::digest(content.to_string()),
         text: content.to_string(),
-        language: MutationLanguage::FunC,
+        language: "func".to_string(),
     };
     (temp_dir, target)
 }
@@ -33,7 +33,7 @@ fn test_mutation_count_comparison() {
     let (_temp_dir, target) = create_test_target(source);
 
     // Get AST mutations
-    let ast_engine = FuncMutationEngine::new();
+    let ast_engine = FuncLanguageEngine::new();
     let ast_mutants = ast_engine.apply_all_mutations(&target);
 
     println!("AST mutations: {}", ast_mutants.len());
@@ -75,7 +75,7 @@ fn test_mutation_quality_comparison() {
     let (_temp_dir, target) = create_test_target(source);
 
     // Get AST mutations
-    let ast_engine = FuncMutationEngine::new();
+    let ast_engine = FuncLanguageEngine::new();
     let ast_mutants = ast_engine.apply_all_mutations(&target);
 
     // Check comment handling (checking old_text for comment patterns)
@@ -123,7 +123,7 @@ int get_counter() method_id {
     let (_temp_dir, target) = create_test_target(source);
 
     // Test that AST system can handle complex FunC code
-    let ast_engine = FuncMutationEngine::new();
+    let ast_engine = FuncLanguageEngine::new();
     let ast_result = std::panic::catch_unwind(|| ast_engine.apply_all_mutations(&target));
 
     assert!(
@@ -157,7 +157,7 @@ fn test_mutation_overlap_analysis() {
 
     let (_temp_dir, target) = create_test_target(source);
 
-    let ast_engine = FuncMutationEngine::new();
+    let ast_engine = FuncLanguageEngine::new();
     let ast_mutants = ast_engine.apply_all_mutations(&target);
 
     // Analyze which lines are affected by mutations
@@ -193,7 +193,7 @@ main() {
 "#;
     
     let (_temp_dir, target) = create_test_target(func_src);
-    let engine = mewt::mutations::get_mutations_for_language(&MutationLanguage::FunC);
+    let engine = FuncLanguageEngine::new();
     let mutants = engine.apply_all_mutations(&target);
 
     fn count(mutants: &[mewt::types::Mutant], slug: &str) -> usize {
