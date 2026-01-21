@@ -25,5 +25,6 @@ result
 .bash_history
 .DS_Store
 
-# Agent Scratchpad
+# Agent stuff
 PROMPT.md
+.claude/settings.local.json

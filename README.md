@@ -133,60 +133,6 @@ Tip: pass `--comprehensive` to `muton run` to disable this optimization and test
 
 Despite these features, mutation campaigns are best conducted infrequently eg after an overhaul to the test suite rather than after adding each individual test. Therefore, mutation testing is not suitable for running in the CI after every push. You may want to run a campaign at the end of the day so that it can run overnight.
 
-## Adding a language
-
-The architecture is language-agnostic. To add a new language, follow these steps. Where possible, prefer using the grammar update script to automate vendor steps.
-
-1) Vendor the grammar (recommended: use the script)
-
-- Add entries for your language to `ops/update-grammar.sh` in both `REPO_URLS` and `GRAMMAR_PATHS`.
-- Preview:
-
-```bash
-just update-grammar language=<language> dry_run=true
-```
-
-- Perform the update (copies `parser.c`, headers, and `grammar.js` into `grammar/<language>/` and records vendored metadata):
-
-```bash
-just update-grammar language=<language>
-```
-
-You can also vendor manually by placing generated C sources under `grammar/<language>/src/` (must include `parser.c`) and `grammar/<language>/grammar.js`.
-
-2) Build integration
-
-- Extend `build.rs` to compile `grammar/<language>/src/parser.c` into a static library (see existing FunC/Tact blocks for reference).
-
-3) Language enumeration
-
-- Update `src/types/language.rs`:
-  - Add a new enum variant
-  - Update `Display`/`FromStr` and extension detection
-
-4) Parser utilities
-
-- Extend `src/mutations/parser.rs` to bind the tree-sitter language and route parsing for the new enum variant.
-
-5) Mutation engine
-
-- Create `src/mutations/<language>/` with:
-  - `engine.rs` implementing `MutationEngine` (copying and modifying an existing engine is easiest)
-  - `kinds.rs` list additional language-specific mutations. Will be merged with language-agnostic mutations in `src/mutations/common/kinds.rs`
-  - `syntax.rs` provide grammar node/field names used by patterns, pulled from strings in `grammar/<lang>/src/parser.c`
-- Wire dispatch in `src/mutations/mod.rs` to return your engine for the new language
-
-6) Tests and examples
-
-- Add example files under `tests/examples/<language>/`
-- Add parser and mutation tests under `tests/language_specific/<language>/`
-
-7) Validate
-
-- `just check`
-- `muton print mutations --language <language>` shows your slugs
-- `muton print mutants --target tests/examples/<language>/...` generates mutants
-
 ## Configuration and precedence
 
 Configuration sources (highest to lowest priority):

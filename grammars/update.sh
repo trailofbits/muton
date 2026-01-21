@@ -130,7 +130,7 @@ if command -v cargo >/dev/null 2>&1; then
   echo "Testing compilation..."
   if ! cargo check; then
     echo "Error: Compilation failed after grammar update"
-    echo "You may need to update node type mappings in src/parser/$language.rs"
+    echo "You may need to update syntax node/field constants in src/languages/$language/syntax.rs"
     exit 1
   fi
 else
@@ -141,8 +141,8 @@ fi
 if command -v cargo >/dev/null 2>&1; then
   echo "Running parser tests..."
   if ! cargo test parser; then
-    echo "Warning: Parser tests failed - you may need to update node type mappings"
-    echo "Check src/parser/$language.rs NodeType::from() mappings"
+    echo "Warning: Parser tests failed - you may need to update syntax constants"
+    echo "Check src/languages/$language/syntax.rs node and field name constants"
     exit 1
   fi
 else
