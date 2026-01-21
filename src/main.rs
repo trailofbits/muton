@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use mewt::run_main;
 use mewt::LanguageRegistry;
+use mewt::run_main;
 
 mod languages;
 

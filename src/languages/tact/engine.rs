@@ -352,7 +352,7 @@ mod tests {
         let target = Target {
             id: 0,
             path: PathBuf::from("test.tact"),
-            file_hash: mewt_core::types::Hash::digest(text.to_string()),
+            file_hash: mewt::types::Hash::digest(text.to_string()),
             text: text.to_string(),
             language: "Tact".to_string(),
         };
