@@ -55,4 +55,8 @@ fn main() {
     // Build Tact grammar
     let tact_dir: PathBuf = ["grammars", "tact", "src"].iter().collect();
     build_grammar(&tact_dir, "tree-sitter-tact");
+
+    // Build Tolk grammar
+    let tolk_dir: PathBuf = ["grammars", "tolk", "src"].iter().collect();
+    build_grammar(&tolk_dir, "tree-sitter-tolk");
 }

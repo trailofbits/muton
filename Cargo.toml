@@ -6,6 +6,10 @@ repository = "https://github.com/trailofbits/muton"
 homepage = "https://github.com/trailofbits/muton"
 edition = "2024"
 
+[lib]
+name = "muton"
+path = "src/lib.rs"
+
 [[bin]]
 name = "muton"
 path = "src/main.rs"

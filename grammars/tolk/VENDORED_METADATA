@@ -1,0 +1,4 @@
+repo=https://github.com/ton-blockchain/ton-language-server
+grammar_path=server/src/languages/tolk/tree-sitter-tolk
+commit=975c6c2c927ab6e8b9e385f7325cec9e0d6fb772
+date=2026-01-21T21:10:10Z

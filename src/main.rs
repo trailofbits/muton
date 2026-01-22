@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use mewt::LanguageRegistry;
 use mewt::run_main;
-
-mod languages;
+use muton::languages;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,6 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut registry = LanguageRegistry::new();
     registry.register(languages::func::engine::FuncLanguageEngine::new());
     registry.register(languages::tact::engine::TactLanguageEngine::new());
+    registry.register(languages::tolk::engine::TolkLanguageEngine::new());
 
     // Run the shared main function
     run_main(Arc::new(registry)).await?;

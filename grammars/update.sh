@@ -15,11 +15,13 @@ dry_run="${2:-false}"
 declare -A REPO_URLS=(
   ["func"]="https://github.com/ton-blockchain/ton-language-server"
   ["tact"]="https://github.com/tact-lang/tact-language-server"
+  ["tolk"]="https://github.com/ton-blockchain/ton-language-server"
 )
 
 declare -A GRAMMAR_PATHS=(
   ["func"]="server/src/languages/func/tree-sitter-func"
   ["tact"]="server/src/languages/tact/tree-sitter-tact"
+  ["tolk"]="server/src/languages/tolk/tree-sitter-tolk"
 )
 
 # Validate language argument
