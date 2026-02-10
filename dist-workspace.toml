@@ -16,6 +16,6 @@ install-path = "CARGO_HOME"
 # Whether to install an updater program
 install-updater = false
 # Publish jobs to run in CI
-publish-jobs = ["./publish-npm-trusted"]
+publish-jobs = ["./npm-publish"]
 # A namespace to use when publishing this package to the npm registry
 npm-scope = "@trailofbits"
