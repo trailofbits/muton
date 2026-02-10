@@ -24,16 +24,19 @@ jobs:
           merge-multiple: true
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '24.x'  # Node 24 ships with npm 11.6+, required for OIDC trusted publishing
           registry-url: 'https://registry.npmjs.org'
       
-      - name: Publish to npm
+      - name: Verify npm version
         run: |
-          # npm automatically uses OIDC authentication when:
-          # 1. id-token: write permission is set
-          # 2. registry-url is configured in setup-node
-          # 3. Publishing from a supported CI/CD provider
+          npm --version
+          echo "npm version verified (needs ≥11.5.1 for OIDC trusted publishing)"
+      
+      - name: Publish to npm with OIDC
+        run: |
+          # npm ≥11.5.1 automatically uses OIDC when --provenance flag is present
+          # and id-token: write permission is set (no NODE_AUTH_TOKEN needed)
           for release in $(echo "$PLAN" | jq --compact-output '.releases[] | select([.artifacts[] | endswith("-npm-package.tar.gz")] | any)'); do
             pkg=$(echo "$release" | jq '.artifacts[] | select(endswith("-npm-package.tar.gz"))' --raw-output)
-            npm publish --access public "./npm/${pkg}"
+            npm publish --provenance --access public "./npm/${pkg}"
           done
