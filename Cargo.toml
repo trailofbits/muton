@@ -1,14 +1,14 @@
 [package]
 name = "muton"
 version = "2.0.1"
-description = "Mutation testing framework for TON smart contracts (FunC and Tact)"
+edition = "2024"
+description = "Mutation testing framework for TON smart contracts"
+authors = ["Bo Henderson <bo.henderson@trailofbits.com>"]
+license = "AGPL-3.0"
 repository = "https://github.com/trailofbits/muton"
 homepage = "https://github.com/trailofbits/muton"
-edition = "2024"
-
-[lib]
-name = "muton"
-path = "src/lib.rs"
+keywords = ["mutation", "testing"]
+categories = ["development-tools::testing", "security"]
 
 [[bin]]
 name = "muton"
