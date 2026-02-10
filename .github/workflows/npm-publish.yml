@@ -25,6 +25,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
+      
+      - name: Check npm version and configure for OIDC
+        run: |
+          npm --version
+          # Ensure npm is updated (Node 20.x should have npm 10+, but let's be sure)
+          npm install -g npm@latest
+          npm --version
+          
+          # npm will use OIDC automatically with --provenance when id-token permission is available
+          # Verify OIDC environment variables are set (NOT printing actual values!)
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "✓ OIDC Request URL is available"
+          else
+            echo "✗ OIDC Request URL is NOT set"
+          fi
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            echo "✓ OIDC Request Token is available"
+          else
+            echo "✗ OIDC Request Token is NOT set"
+          fi
+      
       - name: Publish to npm
         run: |
           for release in $(echo "$PLAN" | jq --compact-output '.releases[] | select([.artifacts[] | endswith("-npm-package.tar.gz")] | any)'); do
