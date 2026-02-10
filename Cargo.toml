@@ -1,6 +1,6 @@
 [package]
 name = "muton"
-version = "1.0.0"
+version = "2.0.1"
 description = "Mutation testing framework for TON smart contracts (FunC and Tact)"
 repository = "https://github.com/trailofbits/muton"
 homepage = "https://github.com/trailofbits/muton"
@@ -15,7 +15,7 @@ name = "muton"
 path = "src/main.rs"
 
 [dependencies]
-mewt = "1.0.0"
+mewt = "2.0.1"
 tree-sitter = "0.25"
 tokio = { version = "1.45.0", features = ["rt", "macros"] }
 

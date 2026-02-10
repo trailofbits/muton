@@ -239,6 +239,7 @@ dependencies = [
  "iana-time-zone",
  "js-sys",
  "num-traits",
+ "serde",
  "wasm-bindgen",
  "windows-link 0.1.1",
 ]
@@ -655,6 +656,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "07e28edb80900c19c28f1072f2e8aeca7fa06b23cd4169cefe1af5aa3260783f"
 
 [[package]]
+name = "glob"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
+
+[[package]]
 name = "globset"
 version = "0.4.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -990,9 +997,9 @@ checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
 
 [[package]]
 name = "mewt"
-version = "1.0.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fd7739537cf4577ae57c4da8db19286d9ad28645e093a15fa725fcaf5b57339"
+checksum = "65078f0fc9c4ae8023c4944388be376983f1f5f01e4b874b54d8da3a89bdd6ab"
 dependencies = [
  "cc",
  "chrono",
@@ -1001,6 +1008,7 @@ dependencies = [
  "ctrlc",
  "dirs-next",
  "fern",
+ "glob",
  "globset",
  "hex",
  "indicatif",
@@ -1008,6 +1016,7 @@ dependencies = [
  "once_cell",
  "regex",
  "serde",
+ "serde_json",
  "sha2",
  "similar",
  "sqlx",
@@ -1040,7 +1049,7 @@ dependencies = [
 
 [[package]]
 name = "muton"
-version = "1.0.0"
+version = "2.0.1"
 dependencies = [
  "cc",
  "mewt",

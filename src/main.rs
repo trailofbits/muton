@@ -13,6 +13,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     registry.register(languages::tolk::engine::TolkLanguageEngine::new());
 
     // Run the shared main function
-    run_main(Arc::new(registry)).await?;
+    run_main(Arc::new(registry), "muton", "Mutation Testing Framework for TON Blockchain Languages").await?;
     Ok(())
 }

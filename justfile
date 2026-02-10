@@ -70,7 +70,7 @@ rerun lang: reset-db
 # Nix Installation
 
 install-nix: build-nix
-  nix profile install ./result
+  nix profile add ./result
 
 uninstall-nix:
   nix profile remove muton
