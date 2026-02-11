@@ -83,7 +83,7 @@ impl LanguageEngine for TolkLanguageEngine {
                                 nodes::WHILE_STATEMENT,
                                 nodes::DO_WHILE_STATEMENT,
                             ],
-                            "throw 1;",
+                            "throw 65535;",
                             &|node, src| {
                                 // Skip existing error/throw statements
                                 !node_text(node, src).contains("throw ")
