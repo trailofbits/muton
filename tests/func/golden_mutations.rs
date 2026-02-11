@@ -34,7 +34,7 @@ fn er_replaces_statement_with_throw1() {
 	let mutated = apply_first_mutant_with_slug(source, "ER").expect("ER mutant");
 	let expected = r#"
 	() test_func() {
-		throw(1);
+		throw(65535);
 	}
 	"#;
 	assert_eq!(mutated, expected);
