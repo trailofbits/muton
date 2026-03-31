@@ -32,7 +32,7 @@ fun test_func(x: int): int {
 
     let (_temp_dir, target) = create_test_target(source);
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     println!("Generated {} mutations", mutants.len());
 
@@ -70,7 +70,7 @@ fun check(val: bool): int {
 
     let (_temp_dir, target) = create_test_target(source);
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     // Should have IF and IT mutations
     let if_mutants: Vec<_> = mutants
@@ -97,7 +97,7 @@ fun calculate(a: int, b: int): int {
 
     let (_temp_dir, target) = create_test_target(source);
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     // Should have arithmetic operator mutations (AOS)
     let aos_mutants: Vec<_> = mutants
@@ -123,7 +123,7 @@ fun isActive(): bool {
 
     let (_temp_dir, target) = create_test_target(source);
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     // Should have boolean literal mutations (BL)
     let bl_mutants: Vec<_> = mutants
@@ -151,7 +151,7 @@ fun loop_test(n: int): int {
 
     let (_temp_dir, target) = create_test_target(source);
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     // Should have while false mutations (WF)
     let wf_mutants: Vec<_> = mutants

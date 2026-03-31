@@ -1036,9 +1036,9 @@ checksum = "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
 
 [[package]]
 name = "mewt"
-version = "3.0.0"
+version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c18aded0d28fbceb0a756e344e52bad77895bbb41482ba921faa203eb93a81d1"
+checksum = "0926365a7a66ec12747186d4bde0d5186dd67cfeac4cf1014cb04f2636624955"
 dependencies = [
  "cc",
  "chrono",

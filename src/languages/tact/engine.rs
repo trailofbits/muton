@@ -4,7 +4,7 @@ use mewt::LanguageEngine;
 use mewt::mutations::COMMON_MUTATIONS;
 use mewt::patterns;
 use mewt::types::{Mutant, Mutation, Target};
-use mewt::utils::node_text;
+use mewt::utils::{node_text, parse_source};
 use tree_sitter::Language as TsLanguage;
 
 use crate::languages::tact::kinds::TACT_MUTATIONS;
@@ -34,11 +34,6 @@ impl TactLanguageEngine {
         Self { mutations }
     }
 
-    fn parse(&self, source: &str) -> Option<tree_sitter::Tree> {
-        let mut parser = tree_sitter::Parser::new();
-        parser.set_language(&self.tree_sitter_language()).ok()?;
-        parser.parse(source, None)
-    }
 }
 
 impl LanguageEngine for TactLanguageEngine {
@@ -50,19 +45,15 @@ impl LanguageEngine for TactLanguageEngine {
         &["tact"]
     }
 
-    fn tree_sitter_language(&self) -> TsLanguage {
-        TACT_LANGUAGE
-            .get_or_init(|| unsafe { TsLanguage::from_raw(tree_sitter_tact()) })
-            .clone()
-    }
-
     fn get_mutations(&self) -> &[Mutation] {
         &self.mutations
     }
 
-    fn apply_all_mutations(&self, target: &Target) -> Vec<Mutant> {
+    fn mutate(&self, target: &Target) -> Vec<Mutant> {
         let source = &target.text;
-        let tree = match self.parse(source) {
+        let language =
+            TACT_LANGUAGE.get_or_init(|| unsafe { TsLanguage::from_raw(tree_sitter_tact()) });
+        let tree = match parse_source(source, language) {
             Some(t) => t,
             None => return Vec::new(),
         };
@@ -357,6 +348,6 @@ mod tests {
             language: "Tact".to_string(),
         };
         let engine = TactLanguageEngine::new();
-        let _ = engine.apply_all_mutations(&target);
+        let _ = engine.mutate(&target);
     }
 }

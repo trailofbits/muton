@@ -37,7 +37,7 @@ contract C {
 
     let target = tact_target_from_source(source);
     let engine = mutations::get_mutations_for_language(&Language::Tact);
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     // Ensure none of the mutants originate from commented content (line or block)
     fn block_spans(src: &str, open: &str, close: &str) -> Vec<(usize, usize)> {

@@ -34,7 +34,7 @@ fn test_mutation_count_comparison() {
 
     // Get AST mutations
     let ast_engine = FuncLanguageEngine::new();
-    let ast_mutants = ast_engine.apply_all_mutations(&target);
+    let ast_mutants = ast_engine.mutate(&target);
 
     println!("AST mutations: {}", ast_mutants.len());
 
@@ -76,7 +76,7 @@ fn test_mutation_quality_comparison() {
 
     // Get AST mutations
     let ast_engine = FuncLanguageEngine::new();
-    let ast_mutants = ast_engine.apply_all_mutations(&target);
+    let ast_mutants = ast_engine.mutate(&target);
 
     // Check comment handling (checking old_text for comment patterns)
     let ast_comment_mutations = ast_mutants
@@ -124,7 +124,7 @@ int get_counter() method_id {
 
     // Test that AST system can handle complex FunC code
     let ast_engine = FuncLanguageEngine::new();
-    let ast_result = std::panic::catch_unwind(|| ast_engine.apply_all_mutations(&target));
+    let ast_result = std::panic::catch_unwind(|| ast_engine.mutate(&target));
 
     assert!(
         ast_result.is_ok(),
@@ -158,7 +158,7 @@ fn test_mutation_overlap_analysis() {
     let (_temp_dir, target) = create_test_target(source);
 
     let ast_engine = FuncLanguageEngine::new();
-    let ast_mutants = ast_engine.apply_all_mutations(&target);
+    let ast_mutants = ast_engine.mutate(&target);
 
     // Analyze which lines are affected by mutations
     let mut ast_lines: HashMap<usize, Vec<String>> = HashMap::new();
@@ -194,7 +194,7 @@ main() {
     
     let (_temp_dir, target) = create_test_target(func_src);
     let engine = FuncLanguageEngine::new();
-    let mutants = engine.apply_all_mutations(&target);
+    let mutants = engine.mutate(&target);
 
     fn count(mutants: &[mewt::types::Mutant], slug: &str) -> usize {
         mutants.iter().filter(|m| m.mutation_slug == slug).count()

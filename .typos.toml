@@ -1,0 +1,3 @@
+[files]
+# Vendored tree-sitter grammars are generated files — do not check them
+extend-exclude = ["grammars/"]
