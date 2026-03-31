@@ -33,7 +33,6 @@ impl FuncLanguageEngine {
         mutations.extend_from_slice(FUNC_MUTATIONS);
         Self { mutations }
     }
-
 }
 
 impl LanguageEngine for FuncLanguageEngine {

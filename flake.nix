@@ -143,6 +143,7 @@
         sqlx-cli
         tailwindcss
         toolchain
+        typos
       ];
 
       devShells = {

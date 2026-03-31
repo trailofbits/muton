@@ -5,16 +5,34 @@ export SQLITE_FILE := project + ".sqlite"
 # Common dev commands
 
 lint:
-  cargo clippy --lib -p {{project}} --tests
+  cargo clippy --lib -p {{project}} --tests || { echo "clippy linter checks failed"; exit 1; }
 
 lint-fix:
   cargo clippy --lib -p {{project}} --tests --fix
 
 check:
-  cargo check
+  cargo check || { echo "cargo check failed"; exit 1; }
+
+fmt-check:
+  cargo fmt --all --check || { echo "formatting checks failed, run 'just fmt'"; exit 1; }
 
 fmt:
-  cargo fmt
+  cargo fmt --all
+
+typos:
+  typos || { echo "typos check failed"; exit 1; }
+
+pre-commit:
+  just fmt-check
+  just check
+  just lint
+  just typos
+
+install-pre-commit:
+  echo 'just pre-commit' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+uninstall-pre-commit:
+  rm .git/hooks/pre-commit
 
 ########################################
 # Database
@@ -31,19 +49,19 @@ db:
 build-all: build build-nix build-x86_64-linux build-aarch64-linux build-aarch64-darwin build-docs
 
 build:
-  cargo build --bin muton
+  cargo build --bin {{project}}
 
 build-nix:
-  nix build .#muton
+  nix build .#{{project}}
 
 build-x86_64-linux:
-  nix build .#muton-x86_64-linux
+  nix build .#{{project}}-x86_64-linux
 
 build-aarch64-linux:
-  nix build .#muton-aarch64-linux
+  nix build .#{{project}}-aarch64-linux
 
 build-aarch64-darwin:
-  nix build .#muton-aarch64-darwin
+  nix build .#{{project}}-aarch64-darwin
 
 build-docs:
   cargo doc
@@ -69,12 +87,12 @@ rerun lang: reset-db
 ########################################
 # Nix Installation
 
-install-nix: build-nix
-  nix profile add ./result
+install-nix:
+  nix profile add .#{{project}}
 
 uninstall-nix:
-  nix profile remove muton
+  nix profile remove {{project}}
 
-reinstall-nix: uninstall-nix
-  just install-nix
+upgrade-nix:
+  nix profile upgrade {{project}}
 

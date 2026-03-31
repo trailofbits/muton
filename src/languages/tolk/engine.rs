@@ -33,7 +33,6 @@ impl TolkLanguageEngine {
         mutations.extend_from_slice(TOLK_MUTATIONS);
         Self { mutations }
     }
-
 }
 
 impl LanguageEngine for TolkLanguageEngine {

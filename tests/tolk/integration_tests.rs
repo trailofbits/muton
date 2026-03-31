@@ -1,6 +1,6 @@
-use muton::languages::tolk::engine::TolkLanguageEngine;
-use mewt::types::{Target, Hash};
 use mewt::LanguageEngine;
+use mewt::types::{Hash, Target};
+use muton::languages::tolk::engine::TolkLanguageEngine;
 use std::collections::HashSet;
 use tempfile::tempdir;
 
@@ -43,10 +43,7 @@ fun test_func(x: int): int {
     );
 
     // Check mutation types
-    let mutation_slugs: HashSet<_> = mutants
-        .iter()
-        .map(|m| m.mutation_slug.as_str())
-        .collect();
+    let mutation_slugs: HashSet<_> = mutants.iter().map(|m| m.mutation_slug.as_str()).collect();
 
     println!("Mutation types: {mutation_slugs:?}");
 
@@ -126,10 +123,7 @@ fun isActive(): bool {
     let mutants = engine.mutate(&target);
 
     // Should have boolean literal mutations (BL)
-    let bl_mutants: Vec<_> = mutants
-        .iter()
-        .filter(|m| m.mutation_slug == "BL")
-        .collect();
+    let bl_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "BL").collect();
 
     assert!(
         !bl_mutants.is_empty(),
@@ -154,10 +148,7 @@ fun loop_test(n: int): int {
     let mutants = engine.mutate(&target);
 
     // Should have while false mutations (WF)
-    let wf_mutants: Vec<_> = mutants
-        .iter()
-        .filter(|m| m.mutation_slug == "WF")
-        .collect();
+    let wf_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "WF").collect();
 
     assert!(
         !wf_mutants.is_empty(),

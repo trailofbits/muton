@@ -33,7 +33,6 @@ impl TactLanguageEngine {
         mutations.extend_from_slice(TACT_MUTATIONS);
         Self { mutations }
     }
-
 }
 
 impl LanguageEngine for TactLanguageEngine {
