@@ -1,6 +1,6 @@
 [package]
 name = "muton"
-version = "2.0.1"
+version = "3.0.1"
 edition = "2024"
 description = "Mutation testing framework for TON smart contracts"
 authors = ["Bo Henderson <bo.henderson@trailofbits.com>"]
