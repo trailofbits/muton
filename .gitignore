@@ -5,6 +5,7 @@ data/
 *.sqlite
 *.sqlite-*
 muton.toml
+.todo/
 
 # Cache
 .cargo
