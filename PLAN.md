@@ -16,7 +16,7 @@ We progress in four phases; each task links to a TODO entry for status tracking.
   - Document existing modules, helpers, and slug coverage to highlight divergences.
 
 ### Phase 2 — Shared Foundations
-- [ ] **Design shared test utilities** (`introduce-shared-test-utilities`)
+- [x] **Design shared test utilities** (`introduce-shared-test-utilities`)
   - Agree on the API/structure for `tests/common` (or equivalent) before refactoring suites.
 
 ### Phase 3 — Language Suites Realignment
@@ -39,6 +39,7 @@ Use this section to note major milestones, decisions, or blockers encountered wh
 | Date | Update | Owner |
 |------|--------|-------|
 | 2026-04-15 | Completed baseline audit of FunC/Tact/Tolk tests vs mewt; documented gaps and per-slug coverage needs. | ChatGPT |
+| 2026-04-15 | Introduced shared `tests/common` fixtures and slug helpers; FunC/Tact/Tolk suites now reuse the centralized targets. | ChatGPT |
 
 ## Maintenance Notes
 - Keep the checkbox list in sync with the `.todo` entries; mark both as tasks complete.

@@ -1,18 +1,6 @@
-use mewt::{mutations, types::{Language, Target, Hash}};
+use mewt::{mutations, types::Language};
 
-fn func_target_from_source(source: &str) -> Target {
-    use tempfile::tempdir;
-    let tmp = tempdir().expect("tmpdir");
-    let path = tmp.path().join("test.fc");
-    std::fs::write(&path, source).unwrap();
-    Target {
-        id: 1,
-        path,
-        file_hash: Hash::digest(source.to_string()),
-        text: source.to_string(),
-        language: Language::FunC,
-    }
-}
+use super::common::func_target;
 
 #[test]
 fn test_error_replacement_mutations() {
@@ -26,9 +14,9 @@ fn test_error_replacement_mutations() {
 }
 "#;
 
-    let target = func_target_from_source(source);
+    let fixture = func_target(source);
     let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     let er_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "ER").collect();
     
@@ -56,9 +44,9 @@ fn test_comment_replacement_mutations() {
 }
 "#;
 
-    let target = func_target_from_source(source);
+    let fixture = func_target(source);
     let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     let cr_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "CR").collect();
     
@@ -87,9 +75,9 @@ fn test_conditional_mutations() {
 }
 "#;
 
-    let target = func_target_from_source(source);
+    let fixture = func_target(source);
     let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     // Should have mutations that target conditional expressions
     let conditional_mutants: Vec<_> = mutants.iter()
@@ -108,9 +96,9 @@ fn test_argument_swap_mutations() {
 }
 "#;
 
-    let target = func_target_from_source(source);
+    let fixture = func_target(source);
     let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     let as_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "AS").collect();
     
@@ -137,9 +125,9 @@ fn test_variable_mutations() {
 }
 "#;
 
-    let target = func_target_from_source(source);
+    let fixture = func_target(source);
     let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     // Should have mutations that target variables and expressions
     let var_mutants: Vec<_> = mutants.iter()
@@ -161,9 +149,9 @@ fn test_loop_mutations() {
 }
 "#;
 
-    let target = func_target_from_source(source);
+    let fixture = func_target(source);
     let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     // Should have mutations that target loop constructs
     let loop_mutants: Vec<_> = mutants.iter()

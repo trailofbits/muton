@@ -1,27 +1,22 @@
 use mewt::mutations::func::ast_engine::ASTMutationEngine;
-use mewt::types::{Language as MutationLanguage, Target};
+use mewt::types::Language as MutationLanguage;
 
-fn create_func_target(source: &str) -> Target {
-	use tempfile::tempdir;
-	let tmp = tempdir().expect("tmpdir");
-	let path = tmp.path().join("test.fc");
-	std::fs::write(&path, source).unwrap();
-	Target {
-		id: 1,
-		path,
-		file_hash: mewt::types::Hash::digest(source.to_string()),
-		text: source.to_string(),
-		language: MutationLanguage::FunC,
-	}
-}
+use super::common::{func_target, sort_by_byte_offset};
 
 fn apply_first_mutant_with_slug(source: &str, slug: &str) -> Option<String> {
-	let target = create_func_target(source);
+	let fixture = func_target(source);
+	let target = fixture.target();
 	let engine = ASTMutationEngine::new(&MutationLanguage::FunC);
-	let mut mutants: Vec<_> = engine.apply_all_mutations(&target)
-		.into_iter().filter(|m| m.mutation_slug == slug).collect();
-	mutants.sort_by_key(|m| m.byte_offset);
-	mutants.into_iter().next().and_then(|m| target.mutate(&m).ok())
+	let mut mutants: Vec<_> = engine
+		.apply_all_mutations(target)
+		.into_iter()
+		.filter(|m| m.mutation_slug == slug)
+		.collect();
+	sort_by_byte_offset(&mut mutants);
+	mutants
+		.into_iter()
+		.next()
+		.and_then(|m| target.mutate(&m).ok())
 }
 
 #[test]

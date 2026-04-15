@@ -1,23 +1,10 @@
 use mewt::LanguageEngine;
-use mewt::types::{Hash, Target};
 use muton::languages::tolk::engine::TolkLanguageEngine;
-use std::collections::HashSet;
-use tempfile::tempdir;
 
-/// Helper to create test target
-fn create_test_target(content: &str) -> (tempfile::TempDir, Target) {
-    let temp_dir = tempdir().expect("Failed to create temp directory");
-    let file_path = temp_dir.path().join("test.tolk");
-    std::fs::write(&file_path, content).expect("Failed to write test file");
-    let target = Target {
-        id: 1,
-        path: file_path,
-        file_hash: Hash::digest(content.to_string()),
-        text: content.to_string(),
-        language: "Tolk".to_string(),
-    };
-    (temp_dir, target)
-}
+#[path = "../common/mod.rs"]
+mod common;
+
+use common::{slug_set, tolk_target};
 
 #[test]
 fn test_basic_mutations() {
@@ -30,9 +17,10 @@ fun test_func(x: int): int {
 }
 "#;
 
-    let (_temp_dir, target) = create_test_target(source);
+    let fixture = tolk_target(source);
+    let target = fixture.target();
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(target);
 
     println!("Generated {} mutations", mutants.len());
 
@@ -43,7 +31,7 @@ fun test_func(x: int): int {
     );
 
     // Check mutation types
-    let mutation_slugs: HashSet<_> = mutants.iter().map(|m| m.mutation_slug.as_str()).collect();
+    let mutation_slugs = slug_set(&mutants);
 
     println!("Mutation types: {mutation_slugs:?}");
 
@@ -65,9 +53,10 @@ fun check(val: bool): int {
 }
 "#;
 
-    let (_temp_dir, target) = create_test_target(source);
+    let fixture = tolk_target(source);
+    let target = fixture.target();
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(target);
 
     // Should have IF and IT mutations
     let if_mutants: Vec<_> = mutants
@@ -92,9 +81,10 @@ fun calculate(a: int, b: int): int {
 }
 "#;
 
-    let (_temp_dir, target) = create_test_target(source);
+    let fixture = tolk_target(source);
+    let target = fixture.target();
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(target);
 
     // Should have arithmetic operator mutations (AOS)
     let aos_mutants: Vec<_> = mutants
@@ -118,9 +108,10 @@ fun isActive(): bool {
 }
 "#;
 
-    let (_temp_dir, target) = create_test_target(source);
+    let fixture = tolk_target(source);
+    let target = fixture.target();
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(target);
 
     // Should have boolean literal mutations (BL)
     let bl_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "BL").collect();
@@ -143,9 +134,10 @@ fun loop_test(n: int): int {
 }
 "#;
 
-    let (_temp_dir, target) = create_test_target(source);
+    let fixture = tolk_target(source);
+    let target = fixture.target();
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(target);
 
     // Should have while false mutations (WF)
     let wf_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "WF").collect();

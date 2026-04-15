@@ -1,18 +1,6 @@
-use mewt::{mutations, types::{Language, Target, Hash}};
+use mewt::{mutations, types::Language};
 
-fn tact_target_from_source(source: &str) -> Target {
-    use tempfile::tempdir;
-    let tmp = tempdir().expect("tmpdir");
-    let path = tmp.path().join("test.tact");
-    std::fs::write(&path, source).unwrap();
-    Target {
-        id: 1,
-        path,
-        file_hash: Hash::digest(source.to_string()),
-        text: source.to_string(),
-        language: Language::Tact,
-    }
-}
+use super::common::tact_target;
 
 #[test]
 fn tact_mutations_ignore_comment_regions() {
@@ -35,27 +23,11 @@ contract C {
     // Lines are 0-based and refer to fully-commented lines only.
     let commented_lines: &[usize] = &[1, 2, 3, 4, 5];
 
-    let target = tact_target_from_source(source);
+    let fixture = tact_target(source);
     let engine = mutations::get_mutations_for_language(&Language::Tact);
-    let mutants = engine.mutate(&target);
+    let mutants = engine.mutate(fixture.target());
 
     // Ensure none of the mutants originate from commented content (line or block)
-    fn block_spans(src: &str, open: &str, close: &str) -> Vec<(usize, usize)> {
-        let mut spans = Vec::new();
-        let mut i = 0;
-        while let Some(open_rel) = src[i..].find(open) {
-            let start = i + open_rel;
-            if let Some(close_rel) = src[start + open.len()..].find(close) {
-                let end = start + open.len() + close_rel + close.len();
-                spans.push((start, end));
-                i = end;
-            } else {
-                break;
-            }
-        }
-        spans
-    }
-
     for m in &mutants {
         let line = m.line_offset as usize;
         assert!(

@@ -1,6 +1,7 @@
-use mewt::types::{Target, Hash};
 use mewt::LanguageRegistry;
 use muton::languages::tact::engine::TactLanguageEngine;
+
+use super::common::tact_target;
 
 #[test]
 fn end_to_end_generate_mutants_tact() {
@@ -14,16 +15,8 @@ fn end_to_end_generate_mutants_tact() {
 		}
 	}
 	"#;
-	let tmp = tempfile::tempdir().unwrap();
-	let path = tmp.path().join("g.tact");
-	std::fs::write(&path, source).unwrap();
-	let target = Target {
-		id: 1,
-		path,
-		file_hash: Hash::digest(source.to_string()),
-		text: source.to_string(),
-		language: "tact".to_string(),
-	};
+	let fixture = tact_target(source);
+	let target = fixture.target();
 
 	// Create a language registry with the Tact engine
 	let mut registry = LanguageRegistry::new();
