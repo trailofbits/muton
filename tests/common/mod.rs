@@ -1,7 +1,9 @@
+#![allow(dead_code)]
+
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
-use mewt::types::{Hash, Language, Mutant, Target};
+use mewt::types::{Hash, Mutant, Target};
 use tempfile::TempDir;
 
 /// Keeps the temporary directory alive for the lifetime of a test target and
@@ -15,7 +17,7 @@ pub struct TargetFixture {
 impl TargetFixture {
     /// Create a new [`TargetFixture`] for the given language, file extension, and
     /// source snippet.
-    pub fn new(language: impl Into<Language>, extension: &str, source: &str) -> Self {
+    pub fn new(language: impl Into<String>, extension: &str, source: &str) -> Self {
         let temp_dir = tempfile::tempdir().expect("failed to create temp dir for test target");
         let file_name = format!("test.{extension}");
         let path = temp_dir.path().join(file_name);
@@ -61,12 +63,12 @@ impl TargetFixture {
 
 /// Create a FunC test target.
 pub fn func_target(source: &str) -> TargetFixture {
-    TargetFixture::new(Language::FunC, "fc", source)
+    TargetFixture::new("FunC", "fc", source)
 }
 
 /// Create a Tact test target.
 pub fn tact_target(source: &str) -> TargetFixture {
-    TargetFixture::new(Language::Tact, "tact", source)
+    TargetFixture::new("Tact", "tact", source)
 }
 
 /// Create a Tolk test target.

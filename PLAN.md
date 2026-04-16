@@ -20,7 +20,7 @@ We progress in four phases; each task links to a TODO entry for status tracking.
   - Agree on the API/structure for `tests/common` (or equivalent) before refactoring suites.
 
 ### Phase 3 — Language Suites Realignment
-- [ ] **FunC per-slug refactor** (`refactor-func-tests-to-per-slug-structure`)
+- [x] **FunC per-slug refactor** (`refactor-func-tests-to-per-slug-structure`)
   - Introduce `mutations/` submodule, migrate assertions, prune redundant tests.
 - [ ] **Tact suite expansion** (`expand-tact-tests-to-match-pattern`)
   - Mirror the sibling hierarchy, add comment-ignore and per-slug coverage.
@@ -40,6 +40,7 @@ Use this section to note major milestones, decisions, or blockers encountered wh
 |------|--------|-------|
 | 2026-04-15 | Completed baseline audit of FunC/Tact/Tolk tests vs mewt; documented gaps and per-slug coverage needs. | ChatGPT |
 | 2026-04-15 | Introduced shared `tests/common` fixtures and slug helpers; FunC/Tact/Tolk suites now reuse the centralized targets. | ChatGPT |
+| 2026-04-15 | Refactored FunC tests into per-slug modules with shared helpers and slug-specific assertions; removed the legacy monolithic suite. | ChatGPT |
 
 ## Maintenance Notes
 - Keep the checkbox list in sync with the `.todo` entries; mark both as tasks complete.

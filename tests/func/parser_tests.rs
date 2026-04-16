@@ -1,11 +1,20 @@
-use mewt::parser;
-use mewt::types::Language;
+use std::sync::OnceLock;
+
+use mewt::utils::parse_source;
+use tree_sitter::Language as TsLanguage;
+
+static FUNC_LANGUAGE: OnceLock<TsLanguage> = OnceLock::new();
+
+unsafe extern "C" {
+	fn tree_sitter_func() -> *const tree_sitter::ffi::TSLanguage;
+}
+
+fn func_language() -> &'static TsLanguage {
+	FUNC_LANGUAGE.get_or_init(|| unsafe { TsLanguage::from_raw(tree_sitter_func()) })
+}
 
 fn parse_func(source: &str) -> tree_sitter::Tree {
-	let lang = Language::FunC;
-	let tree = parser::parse_for_language(&lang, source)
-		.expect("FunC parser returned None");
-	tree
+	parse_source(source, func_language()).expect("FunC parser returned None")
 }
 
 #[test]

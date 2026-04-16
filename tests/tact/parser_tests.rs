@@ -1,11 +1,21 @@
-use mewt::parser;
-use mewt::types::Language;
+use std::collections::HashSet;
+use std::sync::OnceLock;
+
+use mewt::utils::parse_source;
+use tree_sitter::Language as TsLanguage;
+
+static TACT_LANGUAGE: OnceLock<TsLanguage> = OnceLock::new();
+
+unsafe extern "C" {
+	fn tree_sitter_tact() -> *const tree_sitter::ffi::TSLanguage;
+}
+
+fn tact_language() -> &'static TsLanguage {
+	TACT_LANGUAGE.get_or_init(|| unsafe { TsLanguage::from_raw(tree_sitter_tact()) })
+}
 
 fn parse_tact(source: &str) -> tree_sitter::Tree {
-	let lang = Language::Tact;
-	let tree = parser::parse_for_language(&lang, source)
-		.expect("Tact parser returned None");
-	tree
+	parse_source(source, tact_language()).expect("Tact parser returned None")
 }
 
 #[test]
@@ -44,7 +54,7 @@ fn parses_functions_and_statements() {
 	let tree = parse_tact(source);
 	let root = tree.root_node();
 	let mut cursor = root.walk();
-	let mut kinds = std::collections::HashSet::new();
+	let mut kinds = HashSet::new();
 	for child in root.named_children(&mut cursor) {
 		kinds.insert(child.kind().to_string());
 	}
@@ -93,24 +103,32 @@ fn contains_core_statement_kinds_inside_contract() {
 }
 
 #[test]
-fn maps_node_kinds_to_common() {
-	use mewt::parser::common::node_types::CommonNodeType;
-	use mewt::parser::tact::map_node_kind_to_common;
-
-	let cases = vec![
-		("if_statement", CommonNodeType::IfStatement),
-		("while_statement", CommonNodeType::WhileStatement),
-		("return_statement", CommonNodeType::ReturnStatement),
-		("let_statement", CommonNodeType::LetStatement),
-		("binary_expression", CommonNodeType::BinaryExpression),
-		("method_call_expression", CommonNodeType::MethodCallExpression),
-		("static_call_expression", CommonNodeType::StaticCallExpression),
-		("type_identifier", CommonNodeType::TypeIdentifier),
-		("comment", CommonNodeType::Comment),
-	];
-
-	for (kind, expected) in cases {
-		let got = map_node_kind_to_common(kind);
-		assert_eq!(got, expected, "mapping for kind '{kind}'");
+fn finds_comment_nodes() {
+	let source = r#"
+	contract Annotated {
+		fun f(a: Int): Int {
+			/* block comment */
+			let x: Int = 1; // line comment
+			return x;
+		}
 	}
-} 
+	"#;
+	let tree = parse_tact(source);
+	let root = tree.root_node();
+	let mut saw_block = false;
+	let mut saw_line = false;
+	let mut stack = vec![root];
+	while let Some(node) = stack.pop() {
+		let mut cursor = node.walk();
+		for child in node.named_children(&mut cursor) {
+			match child.kind() {
+				"block_comment" => saw_block = true,
+				"line_comment" => saw_line = true,
+				_ => {}
+			}
+			stack.push(child);
+		}
+	}
+	assert!(saw_block, "expected to find block_comment node");
+	assert!(saw_line, "expected to find line_comment node");
+}

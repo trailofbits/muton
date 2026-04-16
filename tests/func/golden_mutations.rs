@@ -1,14 +1,13 @@
-use mewt::mutations::func::ast_engine::ASTMutationEngine;
-use mewt::types::Language as MutationLanguage;
+use muton::languages::func::engine::FuncLanguageEngine;
 
 use super::common::{func_target, sort_by_byte_offset};
 
 fn apply_first_mutant_with_slug(source: &str, slug: &str) -> Option<String> {
 	let fixture = func_target(source);
 	let target = fixture.target();
-	let engine = ASTMutationEngine::new(&MutationLanguage::FunC);
+	let engine = FuncLanguageEngine::new();
 	let mut mutants: Vec<_> = engine
-		.apply_all_mutations(target)
+		.mutate(target)
 		.into_iter()
 		.filter(|m| m.mutation_slug == slug)
 		.collect();

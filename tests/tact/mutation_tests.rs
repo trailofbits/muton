@@ -1,11 +1,11 @@
-use mewt::{mutations, types::Language};
+use muton::languages::tact::engine::TactLanguageEngine;
 
 use super::common::{sort_by_byte_offset, tact_target};
 
 fn apply_first_mutant_with_slug(source: &str, slug: &str) -> Option<String> {
 	let fixture = tact_target(source);
 	let target = fixture.target();
-	let engine = mutations::get_mutations_for_language(&Language::Tact);
+	let engine = TactLanguageEngine::new();
 	let mut mutants: Vec<_> = engine
 		.mutate(target)
 		.into_iter()
@@ -132,7 +132,7 @@ fn comparison_shuffle_includes_not_equal() {
 	// pick a COS mutant that turns == into != specifically
 	let fixture = tact_target(source);
 	let target = fixture.target();
-	let engine = mutations::get_mutations_for_language(&Language::Tact);
+	let engine = TactLanguageEngine::new();
 	let cos = engine
 		.mutate(target)
 		.into_iter()
@@ -161,7 +161,7 @@ fn generates_basic_tact_mutations() {
 	let fixture = tact_target(source);
 	let target = fixture.target();
 
-	let engine = mutations::get_mutations_for_language(&Language::Tact);
+	let engine = TactLanguageEngine::new();
 	let mutants = engine.mutate(target);
 	assert!(!mutants.is_empty(), "expected some mutants for Tact source");
 
@@ -190,7 +190,7 @@ fn argument_swap_on_method_and_static_calls() {
 	"#;
 	let fixture = tact_target(source);
 	let target = fixture.target();
-	let engine = mutations::get_mutations_for_language(&Language::Tact);
+	let engine = TactLanguageEngine::new();
 	let mutants = engine.mutate(target);
 
 	let as_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "AS").collect();
@@ -212,7 +212,7 @@ fn boolean_flip_and_comparison_shuffle() {
 	"#;
 	let fixture = tact_target(source);
 	let target = fixture.target();
-	let engine = mutations::get_mutations_for_language(&Language::Tact);
+	let engine = TactLanguageEngine::new();
 	let mutants = engine.mutate(target);
 
 	let bl = mutants.iter().any(|m| m.mutation_slug == "BL" && (m.old_text == "true" || m.old_text == "false"));
@@ -235,7 +235,7 @@ fn ternary_and_do_until_mutations() {
 	"#;
 	let fixture = tact_target(source);
 	let target = fixture.target();
-	let engine = mutations::get_mutations_for_language(&Language::Tact);
+	let engine = TactLanguageEngine::new();
 	let mutants = engine.mutate(target);
 
 	let tt = mutants.iter().any(|m| m.mutation_slug == "TT");
@@ -260,7 +260,7 @@ fn tact_shared_slugs_presence() {
     
     let fixture = tact_target(tact_src);
     let target = fixture.target();
-    let engine = mutations::get_mutations_for_language(&Language::Tact);
+    let engine = TactLanguageEngine::new();
     let mutants = engine.mutate(target);
 
     fn count(mutants: &[mewt::types::Mutant], slug: &str) -> usize {

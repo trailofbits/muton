@@ -1,4 +1,4 @@
-use mewt::{mutations, types::Language};
+use muton::languages::func::engine::FuncLanguageEngine;
 
 use super::common::func_target;
 
@@ -18,8 +18,8 @@ main() {
     let commented_lines: &[usize] = &[2, 3];
 
     let fixture = func_target(source);
-    let engine = mutations::get_mutations_for_language(&Language::FunC);
-    let mutants = engine.apply_all_mutations(fixture.target());
+    let engine = FuncLanguageEngine::new();
+    let mutants = engine.mutate(fixture.target());
 
     // Ensure none of the mutants originate from commented content (line or block)
     for m in &mutants {

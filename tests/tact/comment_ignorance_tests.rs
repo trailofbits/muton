@@ -1,4 +1,4 @@
-use mewt::{mutations, types::Language};
+use muton::languages::tact::engine::TactLanguageEngine;
 
 use super::common::tact_target;
 
@@ -24,7 +24,7 @@ contract C {
     let commented_lines: &[usize] = &[1, 2, 3, 4, 5];
 
     let fixture = tact_target(source);
-    let engine = mutations::get_mutations_for_language(&Language::Tact);
+    let engine = TactLanguageEngine::new();
     let mutants = engine.mutate(fixture.target());
 
     // Ensure none of the mutants originate from commented content (line or block)
