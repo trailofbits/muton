@@ -1,158 +1,103 @@
-use mewt::LanguageEngine;
+use std::collections::BTreeSet;
+
+use mewt::{LanguageEngine, LanguageRegistry};
 use muton::languages::tolk::engine::TolkLanguageEngine;
 
-#[path = "../common/mod.rs"]
-mod common;
-
-use common::{slug_set, tolk_target};
+use super::common::{slug_set, tolk_target};
 
 #[test]
-fn test_basic_mutations() {
+fn generates_mutants_for_control_flow_and_expressions() {
     let source = r#"
-fun test_func(x: int): int {
-    if (x > 0) {
-        return x;
+fun compute(a: int, b: int): int {
+    var result = a + b;
+    var flag = true;
+
+    if (a > b) {
+        result = result - 1;
     }
-    return 0;
+
+    while (result < 42) {
+        result = result + 1;
+    }
+
+    return result & (a | b);
 }
 "#;
 
     let fixture = tolk_target(source);
-    let target = fixture.target();
     let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(target);
+    let mutants = engine.mutate(fixture.target());
 
-    println!("Generated {} mutations", mutants.len());
-
-    // Should generate some mutations
     assert!(
         !mutants.is_empty(),
-        "Should generate mutations for basic Tolk code"
+        "expected at least one mutant for a non-trivial Tolk program"
     );
 
-    // Check mutation types
     let mutation_slugs = slug_set(&mutants);
-
-    println!("Mutation types: {mutation_slugs:?}");
-
-    // Should generate diverse mutation types (IF, IT, ER, CR, COS, etc.)
-    assert!(
-        mutation_slugs.len() > 2,
-        "Should generate diverse mutation types"
-    );
-}
-
-#[test]
-fn test_if_statement_mutations() {
-    let source = r#"
-fun check(val: bool): int {
-    if (val) {
-        return 1;
+    for expected in ["AOS", "BL", "IF", "WF"] {
+        assert!(
+            mutation_slugs.contains(expected),
+            "expected mutation slug `{expected}` in generated mutants; slugs: {mutation_slugs:?}"
+        );
     }
-    return 0;
-}
-"#;
-
-    let fixture = tolk_target(source);
-    let target = fixture.target();
-    let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(target);
-
-    // Should have IF and IT mutations
-    let if_mutants: Vec<_> = mutants
-        .iter()
-        .filter(|m| m.mutation_slug == "IF" || m.mutation_slug == "IT")
-        .collect();
-
-    assert!(
-        !if_mutants.is_empty(),
-        "Should generate IF/IT mutations for if statements"
-    );
 }
 
 #[test]
-fn test_operator_mutations() {
+fn language_registry_end_to_end_flow() {
     let source = r#"
-fun calculate(a: int, b: int): int {
-    var sum = a + b;
-    var diff = a - b;
-    var prod = a * b;
-    return sum;
-}
-"#;
-
-    let fixture = tolk_target(source);
-    let target = fixture.target();
-    let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(target);
-
-    // Should have arithmetic operator mutations (AOS)
-    let aos_mutants: Vec<_> = mutants
-        .iter()
-        .filter(|m| m.mutation_slug == "AOS")
-        .collect();
-
-    assert!(
-        !aos_mutants.is_empty(),
-        "Should generate AOS mutations for arithmetic operators"
-    );
-}
-
-#[test]
-fn test_boolean_literal_mutations() {
-    let source = r#"
-fun isActive(): bool {
-    var active = true;
-    var inactive = false;
-    return active;
-}
-"#;
-
-    let fixture = tolk_target(source);
-    let target = fixture.target();
-    let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(target);
-
-    // Should have boolean literal mutations (BL)
-    let bl_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "BL").collect();
-
-    assert!(
-        !bl_mutants.is_empty(),
-        "Should generate BL mutations for boolean literals"
-    );
-}
-
-#[test]
-fn test_while_loop_mutations() {
-    let source = r#"
-fun loop_test(n: int): int {
-    var i = 0;
-    while (i < n) {
-        i = i + 1;
+fun main(): int {
+    var value = 3;
+    if (value == 3) {
+        value = value + 1;
     }
-    return i;
+    return value;
 }
 "#;
 
     let fixture = tolk_target(source);
+    let mut registry = LanguageRegistry::new();
+    registry.register(TolkLanguageEngine::new());
+
     let target = fixture.target();
-    let engine = TolkLanguageEngine::new();
-    let mutants = engine.mutate(target);
-
-    // Should have while false mutations (WF)
-    let wf_mutants: Vec<_> = mutants.iter().filter(|m| m.mutation_slug == "WF").collect();
-
+    let mutants = target
+        .generate_mutants(&registry)
+        .expect("mutant generation to succeed");
     assert!(
-        !wf_mutants.is_empty(),
-        "Should generate WF mutations for while loops"
+        !mutants.is_empty(),
+        "registry-backed mutation generation should yield mutants"
+    );
+
+    let mutated = target
+        .mutate(&mutants[0])
+        .expect("applying the first mutant should succeed");
+    assert_ne!(
+        mutated, target.text,
+        "applying a mutant should alter the source text"
     );
 }
 
 #[test]
-fn test_engine_properties() {
+fn engine_reports_expected_metadata_and_slugs() {
     let engine = TolkLanguageEngine::new();
 
     assert_eq!(engine.name(), "Tolk");
     assert_eq!(engine.extensions(), &["tolk"]);
-    assert!(!engine.get_mutations().is_empty());
+
+    let slugs: BTreeSet<_> = engine
+        .get_mutations()
+        .iter()
+        .map(|m| m.slug)
+        .collect();
+
+    let expected: BTreeSet<_> = [
+        "AAOS", "AOS", "AS", "BAOS", "BL", "BOS", "COS", "CR", "ER", "IF",
+        "IT", "LC", "LOS", "SAOS", "SOS", "WF",
+    ]
+    .into_iter()
+    .collect();
+
+    assert_eq!(
+        slugs, expected,
+        "unexpected mutation slugs advertised by the Tolk engine"
+    );
 }

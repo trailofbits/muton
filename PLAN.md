@@ -24,7 +24,7 @@ We progress in four phases; each task links to a TODO entry for status tracking.
   - Introduce `mutations/` submodule, migrate assertions, prune redundant tests.
 - [x] **Tact suite expansion** (`expand-tact-tests-to-match-pattern`)
   - Mirror the sibling hierarchy, add comment-ignore and per-slug coverage.
-- [ ] **Tolk suite rebuild** (`build-tolk-test-suite-like-mewt`)
+- [x] **Tolk suite rebuild** (`build-tolk-test-suite-like-mewt`)
   - Replace the top-level test file with a module structure and per-slug tests.
 
 ### Phase 4 — Guardrails & Documentation
@@ -42,6 +42,7 @@ Use this section to note major milestones, decisions, or blockers encountered wh
 | 2026-04-15 | Introduced shared `tests/common` fixtures and slug helpers; FunC/Tact/Tolk suites now reuse the centralized targets. | ChatGPT |
 | 2026-04-15 | Refactored FunC tests into per-slug modules with shared helpers and slug-specific assertions; removed the legacy monolithic suite. | ChatGPT |
 | 2026-04-16 | Rebuilt Tact suite with per-slug mutation modules, comment-ignore checks, and shared helpers; removed legacy monolithic mutation tests. | ChatGPT |
+| 2026-04-16 | Converted the Tolk suite to the shared module layout with per-slug assertions and end-to-end checks; removed the legacy flat test harness. | ChatGPT |
 
 ## Maintenance Notes
 - Keep the checkbox list in sync with the `.todo` entries; mark both as tasks complete.
