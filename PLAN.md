@@ -28,7 +28,7 @@ We progress in four phases; each task links to a TODO entry for status tracking.
   - Replace the top-level test file with a module structure and per-slug tests.
 
 ### Phase 4 — Guardrails & Documentation
-- [ ] **Automate slug-to-test enforcement** (`enforce-mutation-slug-test-coverage`)
+- [x] **Automate slug-to-test enforcement** (`enforce-mutation-slug-test-coverage`)
   - Add guard tests/scripts that ensure each slug has a dedicated test module.
 - [ ] **Document the new conventions** (`add-test-plan-documentation`)
   - Capture layout, helper usage, and contribution guidelines in docs/README.
@@ -43,6 +43,7 @@ Use this section to note major milestones, decisions, or blockers encountered wh
 | 2026-04-15 | Refactored FunC tests into per-slug modules with shared helpers and slug-specific assertions; removed the legacy monolithic suite. | ChatGPT |
 | 2026-04-16 | Rebuilt Tact suite with per-slug mutation modules, comment-ignore checks, and shared helpers; removed legacy monolithic mutation tests. | ChatGPT |
 | 2026-04-16 | Converted the Tolk suite to the shared module layout with per-slug assertions and end-to-end checks; removed the legacy flat test harness. | ChatGPT |
+| 2026-04-16 | Added `tests/slug_enforcement.rs` guard to compare engine mutation slugs against per-slug test modules across FunC, Tact, and Tolk. | ChatGPT |
 
 ## Maintenance Notes
 - Keep the checkbox list in sync with the `.todo` entries; mark both as tasks complete.
