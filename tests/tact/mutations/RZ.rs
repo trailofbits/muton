@@ -1,4 +1,4 @@
-use super::first_mutated_source;
+use crate::tact::integration_tests::first_mutated_source;
 
 #[test]
 fn rz_replaces_repeat_condition_with_zero() {

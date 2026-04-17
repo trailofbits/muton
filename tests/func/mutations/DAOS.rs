@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use super::mutants_for_slug;
+use crate::func::integration_tests::mutants_for_slug;
 
 #[test]
 fn daos_mutates_division_assignment_operators() {

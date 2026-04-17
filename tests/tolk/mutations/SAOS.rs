@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use super::mutants_for_slug;
+use crate::tolk::integration_tests::mutants_for_slug;
 
 #[test]
 fn saos_mutates_shift_assignment_operators() {

@@ -1,4 +1,4 @@
-use super::first_mutated_source;
+use crate::tolk::integration_tests::first_mutated_source;
 
 #[test]
 fn cr_wraps_statements_in_block_comments() {

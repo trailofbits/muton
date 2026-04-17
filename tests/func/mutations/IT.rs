@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::func::integration_tests::mutants_for_slug;
 
 #[test]
 fn it_replaces_if_conditions_with_true() {

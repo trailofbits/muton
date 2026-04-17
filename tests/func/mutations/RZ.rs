@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::func::integration_tests::mutants_for_slug;
 
 #[test]
 fn rz_sets_repeat_count_to_zero() {

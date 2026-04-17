@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::func::integration_tests::mutants_for_slug;
 
 #[test]
 fn er_replaces_statements_with_throw() {
@@ -15,9 +15,7 @@ fn er_replaces_statements_with_throw() {
     );
 
     assert!(
-        mutants
-            .iter()
-            .all(|m| m.new_text.contains("throw(65535)")),
+        mutants.iter().all(|m| m.new_text.contains("throw(65535)")),
         "expected ER mutants to inject `throw(65535);`"
     );
 }

@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::func::integration_tests::mutants_for_slug;
 
 #[test]
 fn su_replaces_store_uint_first_argument_with_zero() {

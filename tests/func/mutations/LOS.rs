@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::func::integration_tests::mutants_for_slug;
 
 #[test]
 fn los_mutates_logical_operators() {
@@ -15,9 +15,7 @@ int both(int lhs, int rhs) {
     );
 
     assert!(
-        mutants
-            .iter()
-            .any(|m| m.new_text.trim() == "||"),
+        mutants.iter().any(|m| m.new_text.trim() == "||"),
         "expected LOS mutants to include `||` replacement"
     );
 }

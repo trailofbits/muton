@@ -3,6 +3,7 @@
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
+use mewt::LanguageEngine;
 use mewt::types::{Hash, Mutant, Target};
 use tempfile::TempDir;
 
@@ -45,6 +46,11 @@ impl TargetFixture {
         self.target
     }
 
+    /// Consume the fixture, returning both the backing [`TempDir`] and [`Target`].
+    pub fn into_parts(self) -> (TempDir, Target) {
+        (self.temp_dir, self.target)
+    }
+
     /// Borrow the [`TempDir`] keeping the backing file alive.
     pub fn temp_dir(&self) -> &TempDir {
         &self.temp_dir
@@ -61,19 +67,37 @@ impl TargetFixture {
     }
 }
 
+/// Create a test target for a language/extension pair.
+pub fn target_fixture_for_extension(
+    language: &str,
+    extension: &str,
+    source: &str,
+) -> TargetFixture {
+    TargetFixture::new(language, extension, source)
+}
+
 /// Create a FunC test target.
 pub fn func_target(source: &str) -> TargetFixture {
-    TargetFixture::new("FunC", "fc", source)
+    target_fixture_for_extension("FunC", "fc", source)
 }
 
 /// Create a Tact test target.
 pub fn tact_target(source: &str) -> TargetFixture {
-    TargetFixture::new("Tact", "tact", source)
+    target_fixture_for_extension("Tact", "tact", source)
 }
 
 /// Create a Tolk test target.
 pub fn tolk_target(source: &str) -> TargetFixture {
-    TargetFixture::new("Tolk", "tolk", source)
+    target_fixture_for_extension("Tolk", "tolk", source)
+}
+
+/// Collect mutants produced for a single mutation slug.
+pub fn mutants_for_slug(engine: &dyn LanguageEngine, target: &Target, slug: &str) -> Vec<Mutant> {
+    engine
+        .mutate(target)
+        .into_iter()
+        .filter(|m| m.mutation_slug == slug)
+        .collect()
 }
 
 /// Count how many mutants share the same slug.

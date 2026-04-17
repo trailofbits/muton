@@ -1,4 +1,4 @@
-use super::first_mutated_source;
+use crate::tact::integration_tests::first_mutated_source;
 
 #[test]
 fn er_replaces_statements_with_require_false() {

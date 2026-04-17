@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::tact::integration_tests::mutants_for_slug;
 
 #[test]
 fn tf_replaces_ternary_conditions_with_false() {

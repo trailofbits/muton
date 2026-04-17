@@ -1,11 +1,23 @@
+use crate::conformance;
+use crate::utils;
+use mewt::LanguageEngine;
+use mewt::types::{Mutant, Target};
 use muton::languages::func::engine::FuncLanguageEngine;
-use std::collections::{HashMap, HashSet};
 
-use super::common::func_target;
+pub(crate) fn create_test_target(content: &str) -> (tempfile::TempDir, Target) {
+    utils::target_fixture_for_extension("FunC", "fc", content).into_parts()
+}
+
+pub(crate) fn mutants_for_slug(source: &str, slug: &str) -> Vec<Mutant> {
+    let (_tmp, target) = create_test_target(source);
+    let engine = FuncLanguageEngine::new();
+    utils::mutants_for_slug(&engine, &target, slug)
+}
 
 #[test]
-fn test_mutation_count_comparison() {
-    let source = r#"
+fn func_common_conformance_checks() {
+    let sources = conformance::CommonConformanceSources {
+        basic_source: r#"
 () test_func() {
     var x = 42;
     if (x > 0) {
@@ -13,41 +25,8 @@ fn test_mutation_count_comparison() {
     }
     return 0;
 }
-"#;
-
-    let fixture = func_target(source);
-    let target = fixture.target();
-
-    // Get AST mutations
-    let ast_engine = FuncLanguageEngine::new();
-    let ast_mutants = ast_engine.mutate(target);
-
-    println!("AST mutations: {}", ast_mutants.len());
-
-    // AST should generate reasonable number of mutations
-    assert!(
-        !ast_mutants.is_empty(),
-        "AST should generate some mutations"
-    );
-
-    // Check mutation types
-    let ast_slugs: HashSet<_> = ast_mutants
-        .iter()
-        .map(|m| m.mutation_slug.chars().take(2).collect::<String>())
-        .collect();
-
-    println!("AST mutation types: {ast_slugs:?}");
-
-    // Should generate diverse mutation types
-    assert!(
-        ast_slugs.len() > 3,
-        "AST should generate diverse mutation types"
-    );
-}
-
-#[test]
-fn test_mutation_quality_comparison() {
-    let source = r#"
+"#,
+        comment_source: r#"
 () test_func() {
     ;; This is a comment
     var x = 42;
@@ -56,41 +35,16 @@ fn test_mutation_quality_comparison() {
     }
     return 0;
 }
-"#;
-
-    let fixture = func_target(source);
-    let target = fixture.target();
-
-    // Get AST mutations
-    let ast_engine = FuncLanguageEngine::new();
-    let ast_mutants = ast_engine.mutate(target);
-
-    // Check comment handling (checking old_text for comment patterns)
-    let ast_comment_mutations = ast_mutants
-        .iter()
-        .filter(|m| m.old_text.trim().starts_with(";;"))
-        .count();
-
-    println!("AST comment mutations: {ast_comment_mutations}");
-
-    // AST should avoid mutating comment-only lines
-    assert_eq!(
-        ast_comment_mutations, 0,
-        "AST should not mutate comment-only lines"
-    );
-}
-
-#[test]
-fn test_complex_code_handling() {
-    let source = r#"
+"#,
+        complex_source: r#"
 global int counter;
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     slice cs = in_msg_full.begin_parse();
     cs~skip_bits(4);
-    
+
     slice sender_address = cs~load_msg_addr();
-    
+
     if (msg_value > 0) {
         ;; Process message
         var result = process_message(sender_address, msg_value);
@@ -98,41 +52,15 @@ global int counter;
             return ();
         }
     }
-    
+
     throw(0xffff);
 }
 
 int get_counter() method_id {
     return counter;
 }
-"#;
-
-    let fixture = func_target(source);
-    let target = fixture.target();
-
-    // Test that AST system can handle complex FunC code
-    let ast_engine = FuncLanguageEngine::new();
-    let ast_result = std::panic::catch_unwind(|| ast_engine.mutate(target));
-
-    assert!(
-        ast_result.is_ok(),
-        "AST system should handle complex code without panicking"
-    );
-
-    if let Ok(ast_mutants) = ast_result {
-        println!("Complex code - AST mutations: {}", ast_mutants.len());
-
-        // Should generate substantial mutations for complex code
-        assert!(
-            ast_mutants.len() > 5,
-            "AST should generate substantial mutations for complex code"
-        );
-    }
-}
-
-#[test]
-fn test_mutation_overlap_analysis() {
-    let source = r#"
+"#,
+        line_coverage_source: r#"
 () test_func() {
     var x = 42;
     var y = x + 1;
@@ -141,31 +69,38 @@ fn test_mutation_overlap_analysis() {
     }
     return y;
 }
-"#;
+"#,
+    };
 
-    let fixture = func_target(source);
-    let target = fixture.target();
+    let expectations = conformance::CommonConformanceExpectations {
+        language_name: "FunC",
+        comment_line_prefix: ";;",
+        min_complex_mutants: 6,
+    };
 
-    let ast_engine = FuncLanguageEngine::new();
-    let ast_mutants = ast_engine.mutate(target);
-
-    // Analyze which lines are affected by mutations
-    let mut ast_lines: HashMap<usize, Vec<String>> = HashMap::new();
-
-    for mutant in &ast_mutants {
-        ast_lines
-            .entry(mutant.line_offset as usize)
-            .or_default()
-            .push(mutant.mutation_slug.clone());
-    }
-
-    println!("AST mutations by line: {ast_lines:?}");
-
-    // Should affect multiple lines for decent coverage
-    assert!(
-        ast_lines.len() > 1,
-        "AST mutations should affect multiple lines"
+    conformance::run_common_language_checks(
+        create_test_target,
+        || Box::new(FuncLanguageEngine::new()),
+        sources,
+        expectations,
     );
+}
+
+#[test]
+fn func_example_file_generates_mutants() {
+    let source = conformance::read_example_source("tests/func/examples/hello-world.fc");
+    let (_tmp, target) = create_test_target(&source);
+    let mutants = FuncLanguageEngine::new().mutate(&target);
+
+    assert!(
+        !mutants.is_empty(),
+        "FunC example file should generate mutants"
+    );
+
+    let mutated = target
+        .mutate(&mutants[0])
+        .expect("applying the first mutant should succeed");
+    assert_ne!(mutated, target.text);
 }
 
 #[test]
@@ -180,11 +115,10 @@ main() {
     foo(1, 2);
 }
 "#;
-    
-    let fixture = func_target(func_src);
-    let target = fixture.target();
+
+    let (_tmp, target) = create_test_target(func_src);
     let engine = FuncLanguageEngine::new();
-    let mutants = engine.mutate(target);
+    let mutants = engine.mutate(&target);
 
     fn count(mutants: &[mewt::types::Mutant], slug: &str) -> usize {
         mutants.iter().filter(|m| m.mutation_slug == slug).count()
@@ -199,4 +133,41 @@ main() {
     assert!(er_count > 0, "ER should be present in FunC");
     assert!(cr_count > 0, "CR should be present in FunC");
     // AS may or may not be present depending on implementation
+}
+
+#[test]
+fn func_mutations_ignore_comment_regions() {
+    let source = r#"()
+main() {
+    ;; if (true) { throw(1); }
+    {- let y = 10; -}
+    var x = 1;
+    if (x > 0) { return x; }
+}
+"#;
+
+    // NOTE: Keep this list in sync with source above.
+    // Lines are 0-based and refer to fully-commented lines only.
+    let commented_lines: &[usize] = &[2, 3];
+
+    let (_tmp, target) = create_test_target(source);
+    let engine = FuncLanguageEngine::new();
+    let mutants = engine.mutate(&target);
+
+    // Ensure none of the mutants originate from commented content (line or block)
+    for m in &mutants {
+        let line = m.line_offset as usize;
+        assert!(
+            !commented_lines.contains(&line),
+            "mutated on commented line: slug={} line={}",
+            m.mutation_slug,
+            line,
+        );
+    }
+
+    // Ensure CR does not double-wrap block-commented content
+    let cr_nested = mutants
+        .iter()
+        .any(|m| m.mutation_slug == "CR" && m.new_text.contains("{- {-"));
+    assert!(!cr_nested, "CR should not double-wrap commented content");
 }

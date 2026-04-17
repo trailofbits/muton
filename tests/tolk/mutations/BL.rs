@@ -1,4 +1,4 @@
-use super::mutants_for_slug;
+use crate::tolk::integration_tests::mutants_for_slug;
 
 #[test]
 fn bl_flips_boolean_literals() {

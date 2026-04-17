@@ -1,4 +1,4 @@
-use super::first_mutated_source;
+use crate::tact::integration_tests::first_mutated_source;
 
 #[test]
 fn uf_replaces_do_until_condition_with_false() {

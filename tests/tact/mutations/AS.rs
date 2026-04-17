@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use super::mutants_for_slug;
+use crate::tact::integration_tests::mutants_for_slug;
 
 #[test]
 fn as_swaps_arguments_on_calls() {

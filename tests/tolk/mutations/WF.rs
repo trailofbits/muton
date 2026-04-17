@@ -1,4 +1,4 @@
-use super::first_mutated_source;
+use crate::tolk::integration_tests::first_mutated_source;
 
 #[test]
 fn wf_replaces_while_condition_with_false() {

@@ -1,4 +1,4 @@
-use super::first_mutated_source;
+use crate::tact::integration_tests::first_mutated_source;
 
 #[test]
 fn cr_wraps_statement_in_block_comment() {

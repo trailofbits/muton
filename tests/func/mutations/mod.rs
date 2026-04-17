@@ -1,20 +1,5 @@
 #![allow(non_snake_case)]
 
-use muton::languages::func::engine::FuncLanguageEngine;
-use mewt::{LanguageEngine, types::Mutant};
-
-use super::common::func_target;
-
-pub(super) fn mutants_for_slug(source: &str, slug: &str) -> Vec<Mutant> {
-    let fixture = func_target(source);
-    let engine = FuncLanguageEngine::new();
-    engine
-        .mutate(fixture.target())
-        .into_iter()
-        .filter(|m| m.mutation_slug == slug)
-        .collect()
-}
-
 #[path = "AAOS.rs"]
 mod aaos;
 #[path = "AOS.rs"]
