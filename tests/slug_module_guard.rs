@@ -46,7 +46,9 @@ fn test_slugs(language: &str) -> BTreeSet<String> {
             continue;
         }
         if !file_name.ends_with(".rs") {
-            panic!("unexpected non-Rust file in {language} mutation directory: {file_name}",);
+            panic!(
+                "unexpected non-Rust file in {language} mutation directory: {file_name} (expected only <SLUG>.rs modules and mod.rs)",
+            );
         }
         slugs.insert(file_name.trim_end_matches(".rs").to_string());
     }
@@ -69,7 +71,7 @@ fn assert_slug_parity(
 
     if !missing.is_empty() || !extra.is_empty() {
         panic!(
-            "mutation slug coverage mismatch for {language}: missing {missing:?}, extra {extra:?}"
+            "mutation slug module guard failed for {language}\nmissing test modules for engine slugs: {missing:?}\nextra test modules without engine slugs: {extra:?}"
         );
     }
 }
