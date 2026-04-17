@@ -22,7 +22,8 @@ fn los_shuffles_logical_operators() {
         .iter()
         .map(|m| m.new_text.trim().to_string())
         .collect();
-    for expected in ["||"] {
+    {
+        let expected = "||";
         assert!(
             replacements.contains(expected),
             "missing LOS replacement `{expected}`; replacements: {replacements:?}"

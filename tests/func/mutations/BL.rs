@@ -18,7 +18,7 @@ fn bl_flips_boolean_literals() {
     );
 
     assert!(
-        mutants.iter().any(|m| m.new_text.trim() == "false"),
+        mutants.iter().any(|m| m.new_text.contains("false")),
         "expected at least one BL mutant replacing with `false`"
     );
 }

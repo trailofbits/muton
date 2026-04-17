@@ -17,6 +17,7 @@ fn rz_sets_repeat_count_to_zero() {
     );
 
     for mutant in &mutants {
-        assert_eq!(mutant.new_text.trim(), "0");
+        let new_text = mutant.new_text.trim();
+        assert!(new_text == "0" || new_text == "(0)");
     }
 }

@@ -19,6 +19,7 @@ fn int_replaces_ifnot_conditions_with_true() {
     );
 
     for mutant in &mutants {
-        assert_eq!(mutant.new_text.trim(), "true");
+        let new_text = mutant.new_text.trim();
+        assert!(new_text == "true" || new_text == "(true)");
     }
 }

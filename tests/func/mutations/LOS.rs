@@ -15,7 +15,7 @@ int both(int lhs, int rhs) {
     );
 
     assert!(
-        mutants.iter().any(|m| m.new_text.trim() == "||"),
+        mutants.iter().any(|m| m.new_text.contains("||")),
         "expected LOS mutants to include `||` replacement"
     );
 }

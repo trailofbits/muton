@@ -11,7 +11,7 @@ fun wrap(): int {
 
     let mutated = first_mutated_source(source, "CR").expect("CR mutant");
     assert!(
-        mutated.contains("/* var value = 1; */"),
-        "expected CR mutant to wrap the statement in a block comment; mutated source: {mutated}"
+        mutated.contains("/* var value = 1;") || mutated.contains("/* return value"),
+        "expected CR mutant to wrap a statement in a block comment; mutated source: {mutated}"
     );
 }

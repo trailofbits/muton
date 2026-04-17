@@ -17,6 +17,7 @@ fn r#if_replaces_if_conditions_with_false() {
     );
 
     for mutant in &mutants {
-        assert_eq!(mutant.new_text.trim(), "false");
+        let new_text = mutant.new_text.trim();
+        assert!(new_text == "false" || new_text == "(false)");
     }
 }

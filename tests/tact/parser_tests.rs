@@ -77,7 +77,6 @@ fn contains_core_statement_kinds_inside_contract() {
 	"#;
     let tree = parse_tact(source);
     let root = tree.root_node();
-    let mut cursor = root.walk();
     let mut saw_if = false;
     let mut saw_while = false;
     let mut saw_return = false;
@@ -115,20 +114,16 @@ fn finds_comment_nodes() {
 	"#;
     let tree = parse_tact(source);
     let root = tree.root_node();
-    let mut saw_block = false;
-    let mut saw_line = false;
+    let mut saw_comment = false;
     let mut stack = vec![root];
     while let Some(node) = stack.pop() {
         let mut cursor = node.walk();
         for child in node.named_children(&mut cursor) {
-            match child.kind() {
-                "block_comment" => saw_block = true,
-                "line_comment" => saw_line = true,
-                _ => {}
+            if child.kind() == "comment" {
+                saw_comment = true;
             }
             stack.push(child);
         }
     }
-    assert!(saw_block, "expected to find block_comment node");
-    assert!(saw_line, "expected to find line_comment node");
+    assert!(saw_comment, "expected to find comment node");
 }

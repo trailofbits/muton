@@ -191,8 +191,8 @@ impl LanguageEngine for FuncLanguageEngine {
                         patterns::replace_condition(
                             root,
                             source,
-                            nodes::UNTIL_STATEMENT,
-                            fields::CONDITION,
+                            nodes::DO_STATEMENT,
+                            fields::POSTCONDITION,
                             &["until"],
                             "false",
                         )
@@ -201,32 +201,23 @@ impl LanguageEngine for FuncLanguageEngine {
                     );
                 }
                 "AS" => {
-                    // Retain existing args-field path; fallback is handled by separate helper call below
                     all_mutants.extend(
                         patterns::swap_args(
                             root,
                             source,
-                            &[
-                                nodes::CALL_EXPRESSION,
-                                nodes::FUNCTION_APPLICATION,
-                                nodes::METHOD_CALL,
-                            ],
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
                             fields::ARGUMENTS,
                         )
                         .into_iter()
                         .map(|p| Mutant::from_partial(p, target, "AS")),
                     );
-                    // Fallback: try again where arguments are in an alternate list container
+                    // tree-sitter-func has a misspelled field variant in some productions
                     all_mutants.extend(
                         patterns::swap_args(
                             root,
                             source,
-                            &[
-                                nodes::CALL_EXPRESSION,
-                                nodes::FUNCTION_APPLICATION,
-                                nodes::METHOD_CALL,
-                            ],
-                            nodes::ARGUMENT_LIST,
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
+                            fields::AGRUMENTS,
                         )
                         .into_iter()
                         .map(|p| Mutant::from_partial(p, target, "AS")),
@@ -237,13 +228,22 @@ impl LanguageEngine for FuncLanguageEngine {
                         patterns::replace_first_arg(
                             root,
                             source,
-                            &[
-                                nodes::CALL_EXPRESSION,
-                                nodes::FUNCTION_APPLICATION,
-                                nodes::METHOD_CALL,
-                            ],
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
                             fields::ARGUMENTS,
-                            &[nodes::ARGUMENT_LIST],
+                            &[],
+                            &|callee: &str| callee.contains("store_uint"),
+                            "0",
+                        )
+                        .into_iter()
+                        .map(|p| Mutant::from_partial(p, target, "SU")),
+                    );
+                    all_mutants.extend(
+                        patterns::replace_first_arg(
+                            root,
+                            source,
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
+                            fields::AGRUMENTS,
+                            &[],
                             &|callee: &str| callee.contains("store_uint"),
                             "0",
                         )
@@ -256,13 +256,22 @@ impl LanguageEngine for FuncLanguageEngine {
                         patterns::replace_first_arg(
                             root,
                             source,
-                            &[
-                                nodes::CALL_EXPRESSION,
-                                nodes::FUNCTION_APPLICATION,
-                                nodes::METHOD_CALL,
-                            ],
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
                             fields::ARGUMENTS,
-                            &[nodes::ARGUMENT_LIST],
+                            &[],
+                            &|callee: &str| callee.contains("store_int"),
+                            "0",
+                        )
+                        .into_iter()
+                        .map(|p| Mutant::from_partial(p, target, "SI")),
+                    );
+                    all_mutants.extend(
+                        patterns::replace_first_arg(
+                            root,
+                            source,
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
+                            fields::AGRUMENTS,
+                            &[],
                             &|callee: &str| callee.contains("store_int"),
                             "0",
                         )
@@ -275,13 +284,22 @@ impl LanguageEngine for FuncLanguageEngine {
                         patterns::replace_first_arg(
                             root,
                             source,
-                            &[
-                                nodes::CALL_EXPRESSION,
-                                nodes::FUNCTION_APPLICATION,
-                                nodes::METHOD_CALL,
-                            ],
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
                             fields::ARGUMENTS,
-                            &[nodes::ARGUMENT_LIST],
+                            &[],
+                            &|callee: &str| callee.contains("store_coins"),
+                            "0",
+                        )
+                        .into_iter()
+                        .map(|p| Mutant::from_partial(p, target, "SC")),
+                    );
+                    all_mutants.extend(
+                        patterns::replace_first_arg(
+                            root,
+                            source,
+                            &[nodes::FUNCTION_APPLICATION, nodes::METHOD_CALL],
+                            fields::AGRUMENTS,
+                            &[],
                             &|callee: &str| callee.contains("store_coins"),
                             "0",
                         )
@@ -293,7 +311,7 @@ impl LanguageEngine for FuncLanguageEngine {
                     patterns::shuffle_nodes(
                         root,
                         source,
-                        &[nodes::BREAK_STATEMENT, nodes::CONTINUE_STATEMENT],
+                        &[nodes::EXPRESSION_STATEMENT],
                         &["break", "continue"],
                     )
                     .into_iter()
@@ -304,7 +322,7 @@ impl LanguageEngine for FuncLanguageEngine {
                         patterns::shuffle_nodes(
                             root,
                             source,
-                            &[nodes::BOOLEAN],
+                            &[nodes::EXPRESSION],
                             &["true", "false"],
                         )
                         .into_iter()
@@ -384,7 +402,7 @@ impl LanguageEngine for FuncLanguageEngine {
                     .map(|p| Mutant::from_partial(p, target, "DAOS")),
                 ),
                 "LOS" => all_mutants.extend(
-                    patterns::shuffle_operators(root, source, &[nodes::EXPRESSION], &["&&", "||"])
+                    patterns::shuffle_nodes(root, source, &[nodes::EXPRESSION], &["&&", "||"])
                         .into_iter()
                         .map(|p| Mutant::from_partial(p, target, "LOS")),
                 ),

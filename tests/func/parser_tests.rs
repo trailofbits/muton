@@ -22,7 +22,7 @@ fn parses_minimal_function() {
     let source = r#"() test() { return 1; }"#;
     let tree = parse_func(source);
     let root = tree.root_node();
-    assert_eq!(root.kind(), "source_file");
+    assert_eq!(root.kind(), "translation_unit");
     // Ensure we have at least one named child
     let mut cursor = root.walk();
     assert!(root.named_children(&mut cursor).count() > 0);

@@ -129,7 +129,7 @@ fn end_to_end_generate_mutants_tact() {
     registry.register(TactLanguageEngine::new());
 
     let mutants = target.generate_mutants(&registry, None).expect("mutants");
-    assert!(mutants.len() > 0, "expected at least one mutant");
+    assert!(!mutants.is_empty(), "expected at least one mutant");
 
     // Mutating content should succeed
     let mutated = target.mutate(&mutants[0]).expect("mutated content");

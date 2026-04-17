@@ -21,6 +21,7 @@ pub mod nodes {
     pub const UNARY_OPERATOR: &str = "unary_operator";
     pub const BOOLEAN_LITERAL: &str = "boolean_literal";
     pub const ASSIGNMENT: &str = "assignment";
+    pub const SET_ASSIGNMENT: &str = "set_assignment";
     pub const LAMBDA_EXPRESSION: &str = "lambda_expression";
     pub const MATCH_EXPRESSION: &str = "match_expression";
 }

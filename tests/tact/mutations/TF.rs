@@ -5,7 +5,7 @@ fn tf_replaces_ternary_conditions_with_false() {
     let source = r#"
     contract F {
         fun f(a: Int): Int {
-            return if (a > 0) 1 else 2;
+            return a > 0 ? 1 : 2;
         }
     }
     "#;

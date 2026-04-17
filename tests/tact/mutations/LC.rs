@@ -27,10 +27,10 @@ fn lc_swaps_loop_control_statements() {
         .iter()
         .map(|m| m.new_text.trim().to_string())
         .collect();
-    for expected in ["continue", "break"] {
-        assert!(
-            replacements.contains(expected),
-            "missing LC replacement `{expected}`; replacements: {replacements:?}"
-        );
-    }
+    let saw_continue = replacements.contains("continue") || replacements.contains("continue;");
+    let saw_break = replacements.contains("break") || replacements.contains("break;");
+    assert!(
+        saw_continue && saw_break,
+        "missing LC replacements; replacements: {replacements:?}"
+    );
 }
