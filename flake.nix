@@ -133,7 +133,9 @@
       };
 
       devInputs = with pkgs; [
+        actionlint
         cargo-watch
+        just
         libiconv
         openssl
         pkg-config
@@ -141,7 +143,6 @@
         rustup
         sqlite
         sqlx-cli
-        tailwindcss
         toolchain
         typos
       ];
@@ -152,7 +153,7 @@
           buildInputs = devInputs;
           shellHook = ''
             export CARGO_HOME=$(pwd)/.cargo
-            export PATH="$CARGO_HOME/bin:$PATH"
+            export PATH="$PATH:$CARGO_HOME/bin"
           '';
         };
       };
