@@ -446,6 +446,18 @@ impl LanguageEngine for FuncLanguageEngine {
                     .into_iter()
                     .map(|p| Mutant::from_partial(p, target, "SAOS")),
                 ),
+                "NR" => all_mutants.extend(
+                    patterns::remove_unary_operator(
+                        root,
+                        source,
+                        nodes::EXPRESSION,
+                        "operator",
+                        "argument",
+                        "!",
+                    )
+                    .into_iter()
+                    .map(|p| Mutant::from_partial(p, target, "NR")),
+                ),
                 _ => {
                     panic!(
                         "Unknown mutation slug encountered in FunC engine: {}",

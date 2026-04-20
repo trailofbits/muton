@@ -13,6 +13,7 @@ pub mod nodes {
     pub const RETURN_STATEMENT: &str = "return_statement";
     pub const STATIC_CALL_EXPRESSION: &str = "static_call_expression";
     pub const TERNARY_EXPRESSION: &str = "ternary_expression";
+    pub const UNARY_EXPRESSION: &str = "unary_expression";
     pub const WHILE_STATEMENT: &str = "while_statement";
     pub const BREAK_STATEMENT: &str = "break_statement";
     pub const CONTINUE_STATEMENT: &str = "continue_statement";
@@ -21,4 +22,6 @@ pub mod nodes {
 pub mod fields {
     pub const CONDITION: &str = "condition";
     pub const ARGUMENTS: &str = "arguments";
+    pub const OPERATOR: &str = "operator";
+    pub const ARGUMENT: &str = "argument";
 }

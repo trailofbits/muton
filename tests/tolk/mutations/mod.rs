@@ -26,6 +26,8 @@ mod it;
 mod lc;
 #[path = "LOS.rs"]
 mod los;
+#[path = "NR.rs"]
+mod nr;
 #[path = "SAOS.rs"]
 mod saos;
 #[path = "SOS.rs"]

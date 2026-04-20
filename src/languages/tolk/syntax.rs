@@ -36,6 +36,7 @@ pub mod fields {
     // Function call fields
     pub const FUNCTION_NAME: &str = "function_name";
     pub const ARGUMENTS: &str = "arguments";
+    pub const ARGUMENT: &str = "argument";
 
     // Binary operator fields
     pub const OPERATOR_NAME: &str = "operator_name";
