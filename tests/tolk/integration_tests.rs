@@ -150,7 +150,7 @@ fn engine_reports_expected_metadata_and_slugs() {
     let slugs: BTreeSet<_> = engine.get_mutations().iter().map(|m| m.slug).collect();
 
     let expected: BTreeSet<_> = [
-        "AAOS", "AOS", "AS", "BAOS", "BL", "BOS", "COS", "CR", "ER", "IF", "IT", "LC", "LOS",
+        "AAOS", "AOS", "AS", "BAOS", "BL", "BOS", "COS", "CR", "ER", "IF", "IT", "LC", "LOS", "NR",
         "SAOS", "SOS", "WF",
     ]
     .into_iter()

@@ -38,6 +38,8 @@ mod los;
 mod maos;
 #[path = "MOS.rs"]
 mod mos;
+#[path = "NR.rs"]
+mod nr;
 #[path = "RZ.rs"]
 mod rz;
 #[path = "SAOS.rs"]

@@ -4,6 +4,8 @@ use mewt::LanguageRegistry;
 use mewt::run_main;
 use muton::languages;
 
+const MUTON_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create language registry and register supported languages
@@ -17,6 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Arc::new(registry),
         "muton",
         "Mutation Testing Framework for TON Blockchain Languages",
+        Some(MUTON_VERSION),
     )
     .await?;
     Ok(())
