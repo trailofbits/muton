@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 3.1.0 - 2026-04-20
+
+### Changed
+- Upgraded core dependency [`mewt`](https://github.com/trailofbits/mewt) from `3.0.1` to `3.1.0`
+- Muton now passes its crate version into the shared runtime so `muton --version` consistently reports the Muton package version
+- Reorganized language mutation test suites to a per-language/per-slug structure with shared conformance helpers
+
+### Added
+- `NR` (Negation Removal) mutation support in TON language engines with per-language mutation tests
+- Dedicated CI workflows for formatting and test validation, and release gating on both checks
+- Coverage guardrails that enforce one mutation test module per registered slug across supported languages
+
+### Fixed
+- Typos configuration now ignores vendored FunC grammar identifiers to reduce false positives
+
 ## 3.0.1 - 2026-03-31
 
 ### Added
