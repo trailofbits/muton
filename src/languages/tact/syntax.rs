@@ -1,4 +1,5 @@
 pub mod nodes {
+    pub const AUGMENTED_ASSIGNMENT_STATEMENT: &str = "augmented_assignment_statement";
     pub const BINARY_EXPRESSION: &str = "binary_expression";
     pub const BOOLEAN: &str = "boolean";
     pub const DESTRUCT_STATEMENT: &str = "destruct_statement";

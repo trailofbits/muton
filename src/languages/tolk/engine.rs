@@ -194,7 +194,7 @@ impl LanguageEngine for TolkLanguageEngine {
                     patterns::shuffle_operators(
                         root,
                         source,
-                        &[nodes::ASSIGNMENT],
+                        &[nodes::ASSIGNMENT, nodes::SET_ASSIGNMENT],
                         &["+=", "-=", "*=", "/="],
                     )
                     .into_iter()
@@ -214,7 +214,7 @@ impl LanguageEngine for TolkLanguageEngine {
                     patterns::shuffle_operators(
                         root,
                         source,
-                        &[nodes::ASSIGNMENT],
+                        &[nodes::ASSIGNMENT, nodes::SET_ASSIGNMENT],
                         &["&=", "|=", "^="],
                     )
                     .into_iter()
@@ -254,7 +254,7 @@ impl LanguageEngine for TolkLanguageEngine {
                     patterns::shuffle_operators(
                         root,
                         source,
-                        &[nodes::ASSIGNMENT],
+                        &[nodes::ASSIGNMENT, nodes::SET_ASSIGNMENT],
                         &["<<=", ">>="],
                     )
                     .into_iter()

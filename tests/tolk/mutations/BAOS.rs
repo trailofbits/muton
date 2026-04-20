@@ -1,0 +1,31 @@
+use std::collections::HashSet;
+
+use crate::tolk::integration_tests::mutants_for_slug;
+
+#[test]
+fn baos_mutates_bitwise_assignment_operators() {
+    let source = r#"
+fun apply(a: int, b: int): int {
+    var value = a;
+    value &= b;
+    return value;
+}
+"#;
+
+    let mutants = mutants_for_slug(source, "BAOS");
+    assert!(
+        !mutants.is_empty(),
+        "expected BAOS mutants for compound bitwise assignments"
+    );
+
+    let replacements: HashSet<_> = mutants
+        .iter()
+        .map(|m| m.new_text.trim().to_string())
+        .collect();
+    for expected in ["|=", "^="] {
+        assert!(
+            replacements.contains(expected),
+            "missing BAOS replacement `{expected}`; replacements: {replacements:?}"
+        );
+    }
+}

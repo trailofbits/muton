@@ -184,7 +184,7 @@ impl LanguageEngine for TactLanguageEngine {
                     patterns::shuffle_operators(
                         root,
                         source,
-                        &[nodes::BINARY_EXPRESSION],
+                        &[nodes::AUGMENTED_ASSIGNMENT_STATEMENT],
                         &["+=", "-=", "*=", "/="],
                     )
                     .into_iter()
@@ -204,7 +204,7 @@ impl LanguageEngine for TactLanguageEngine {
                     patterns::shuffle_operators(
                         root,
                         source,
-                        &[nodes::BINARY_EXPRESSION],
+                        &[nodes::AUGMENTED_ASSIGNMENT_STATEMENT],
                         &["&=", "|=", "^="],
                     )
                     .into_iter()
@@ -261,7 +261,7 @@ impl LanguageEngine for TactLanguageEngine {
                     patterns::shuffle_operators(
                         root,
                         source,
-                        &[nodes::BINARY_EXPRESSION],
+                        &[nodes::AUGMENTED_ASSIGNMENT_STATEMENT],
                         &["<<=", ">>="],
                     )
                     .into_iter()
@@ -295,7 +295,7 @@ impl LanguageEngine for TactLanguageEngine {
                     patterns::shuffle_nodes(
                         root,
                         source,
-                        &[nodes::BREAK_STATEMENT, nodes::CONTINUE_STATEMENT],
+                        &[nodes::EXPRESSION_STATEMENT],
                         &["break", "continue"],
                     )
                     .into_iter()
