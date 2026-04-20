@@ -1,3 +1,9 @@
 [files]
 # Vendored tree-sitter grammars are generated files — do not check them
 extend-exclude = ["grammars/"]
+
+[default.extend-words]
+# tree-sitter-func uses the misspelled field name `agruments` in parts of its grammar.
+# We intentionally support that upstream spelling in our query patterns.
+agruments = "agruments"
+AGRUMENTS = "AGRUMENTS"
