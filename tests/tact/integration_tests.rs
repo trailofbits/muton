@@ -3,9 +3,10 @@ use crate::utils;
 use mewt::types::{Mutant, Target};
 use mewt::{LanguageEngine, LanguageRegistry};
 use muton::languages::tact::engine::TactLanguageEngine;
+use muton::languages::tact::resolver::TactLanguageResolver;
 
 pub(crate) fn create_test_target(content: &str) -> (tempfile::TempDir, Target) {
-    utils::target_fixture_for_extension("Tact", "tact", content).into_parts()
+    utils::target_fixture_for_extension("tact", "tact", content).into_parts()
 }
 
 pub(crate) fn mutants_for_slug(source: &str, slug: &str) -> Vec<Mutant> {
@@ -126,7 +127,7 @@ fn end_to_end_generate_mutants_tact() {
 
     // Create a language registry with the Tact engine
     let mut registry = LanguageRegistry::new();
-    registry.register(TactLanguageEngine::new());
+    registry.register_resolver(TactLanguageResolver::new());
 
     let mutants = target.generate_mutants(&registry, None).expect("mutants");
     assert!(!mutants.is_empty(), "expected at least one mutant");

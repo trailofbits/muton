@@ -5,7 +5,7 @@ use mewt::types::{Mutant, Target};
 use muton::languages::func::engine::FuncLanguageEngine;
 
 pub(crate) fn create_test_target(content: &str) -> (tempfile::TempDir, Target) {
-    utils::target_fixture_for_extension("FunC", "fc", content).into_parts()
+    utils::target_fixture_for_extension("func", "fc", content).into_parts()
 }
 
 pub(crate) fn mutants_for_slug(source: &str, slug: &str) -> Vec<Mutant> {

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 4.0.0 - 2026-06-30
+
+### Changed
+- **BREAKING**: Upgraded core dependency [`mewt`](https://github.com/trailofbits/mewt) from `3.1.0` to `4.0.0`
+- **BREAKING**: Language labels are now canonicalized as lowercase `family` (or `family/dialect`) values; legacy mixed-case labels (`FunC`, `Tact`, `Tolk`) are no longer accepted in config, per-target overrides, or `--language` filters
+- **BREAKING**: Language engines now implement `language() -> &Language` instead of the removed `name()` and `extensions()` methods
+- Each language engine is now registered through a `LanguageResolver` (`FuncLanguageResolver`, `TactLanguageResolver`, `TolkLanguageResolver`) rather than passed directly to `LanguageRegistry::register`
+- `LanguageRegistry::register_resolver` replaces the old `register` method
+- Top-level `[[per_target]]` rules are now supported for per-target test, run, and language overrides; nested `[[test.per_target]]` remains accepted but is deprecated
+
 ## 3.1.0 - 2026-04-20
 
 ### Changed

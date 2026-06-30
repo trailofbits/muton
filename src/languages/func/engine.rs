@@ -3,7 +3,7 @@ use std::sync::OnceLock;
 use mewt::LanguageEngine;
 use mewt::mutations::COMMON_MUTATIONS;
 use mewt::patterns;
-use mewt::types::{Mutant, Mutation, Target};
+use mewt::types::{Language, Mutant, Mutation, Target};
 use mewt::utils::{node_text, parse_source};
 use tree_sitter::Language as TsLanguage;
 
@@ -17,6 +17,7 @@ unsafe extern "C" {
 }
 
 pub struct FuncLanguageEngine {
+    language: Language,
     mutations: Vec<Mutation>,
 }
 
@@ -31,17 +32,18 @@ impl FuncLanguageEngine {
         let mut mutations: Vec<Mutation> = Vec::new();
         mutations.extend_from_slice(COMMON_MUTATIONS);
         mutations.extend_from_slice(FUNC_MUTATIONS);
-        Self { mutations }
+        Self {
+            language: "func"
+                .parse()
+                .expect("hardcoded language identifier should be valid"),
+            mutations,
+        }
     }
 }
 
 impl LanguageEngine for FuncLanguageEngine {
-    fn name(&self) -> &'static str {
-        "FunC"
-    }
-
-    fn extensions(&self) -> &[&'static str] {
-        &["fc"]
+    fn language(&self) -> &Language {
+        &self.language
     }
 
     fn get_mutations(&self) -> &[Mutation] {
@@ -502,7 +504,7 @@ mod tests {
             path: PathBuf::from("test.fc"),
             file_hash: mewt::types::Hash::digest(text.to_string()),
             text: text.to_string(),
-            language: "FunC".to_string(),
+            language: "func".parse().expect("valid language"),
         };
         let engine = FuncLanguageEngine::new();
         // Will panic if any slug is missing a match arm (default case)

@@ -3,7 +3,7 @@ use std::sync::OnceLock;
 use mewt::LanguageEngine;
 use mewt::mutations::COMMON_MUTATIONS;
 use mewt::patterns;
-use mewt::types::{Mutant, Mutation, Target};
+use mewt::types::{Language, Mutant, Mutation, Target};
 use mewt::utils::{node_text, parse_source};
 use tree_sitter::Language as TsLanguage;
 
@@ -17,6 +17,7 @@ unsafe extern "C" {
 }
 
 pub struct TactLanguageEngine {
+    language: Language,
     mutations: Vec<Mutation>,
 }
 
@@ -31,17 +32,18 @@ impl TactLanguageEngine {
         let mut mutations: Vec<Mutation> = Vec::new();
         mutations.extend_from_slice(COMMON_MUTATIONS);
         mutations.extend_from_slice(TACT_MUTATIONS);
-        Self { mutations }
+        Self {
+            language: "tact"
+                .parse()
+                .expect("hardcoded language identifier should be valid"),
+            mutations,
+        }
     }
 }
 
 impl LanguageEngine for TactLanguageEngine {
-    fn name(&self) -> &'static str {
-        "Tact"
-    }
-
-    fn extensions(&self) -> &[&'static str] {
-        &["tact"]
+    fn language(&self) -> &Language {
+        &self.language
     }
 
     fn get_mutations(&self) -> &[Mutation] {
@@ -356,7 +358,7 @@ mod tests {
             path: PathBuf::from("test.tact"),
             file_hash: mewt::types::Hash::digest(text.to_string()),
             text: text.to_string(),
-            language: "Tact".to_string(),
+            language: "tact".parse().expect("valid language"),
         };
         let engine = TactLanguageEngine::new();
         let _ = engine.mutate(&target);

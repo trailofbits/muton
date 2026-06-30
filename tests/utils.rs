@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use mewt::LanguageEngine;
-use mewt::types::{Hash, Mutant, Target};
+use mewt::types::{Hash, Language, Mutant, Target};
 use tempfile::TempDir;
 
 /// Keeps the temporary directory alive for the lifetime of a test target and
@@ -18,7 +18,7 @@ pub struct TargetFixture {
 impl TargetFixture {
     /// Create a new [`TargetFixture`] for the given language, file extension, and
     /// source snippet.
-    pub fn new(language: impl Into<String>, extension: &str, source: &str) -> Self {
+    pub fn new(language: impl AsRef<str>, extension: &str, source: &str) -> Self {
         let temp_dir = tempfile::tempdir().expect("failed to create temp dir for test target");
         let file_name = format!("test.{extension}");
         let path = temp_dir.path().join(file_name);
@@ -30,7 +30,10 @@ impl TargetFixture {
             path,
             file_hash: Hash::digest(text.clone()),
             text,
-            language: language.into(),
+            language: language
+                .as_ref()
+                .parse::<Language>()
+                .expect("test language should be a valid canonical label"),
         };
 
         Self { temp_dir, target }
@@ -78,17 +81,17 @@ pub fn target_fixture_for_extension(
 
 /// Create a FunC test target.
 pub fn func_target(source: &str) -> TargetFixture {
-    target_fixture_for_extension("FunC", "fc", source)
+    target_fixture_for_extension("func", "fc", source)
 }
 
 /// Create a Tact test target.
 pub fn tact_target(source: &str) -> TargetFixture {
-    target_fixture_for_extension("Tact", "tact", source)
+    target_fixture_for_extension("tact", "tact", source)
 }
 
 /// Create a Tolk test target.
 pub fn tolk_target(source: &str) -> TargetFixture {
-    target_fixture_for_extension("Tolk", "tolk", source)
+    target_fixture_for_extension("tolk", "tolk", source)
 }
 
 /// Collect mutants produced for a single mutation slug.
