@@ -10,9 +10,9 @@ const MUTON_VERSION: &str = env!("CARGO_PKG_VERSION");
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create language registry and register supported languages
     let mut registry = LanguageRegistry::new();
-    registry.register(languages::func::engine::FuncLanguageEngine::new());
-    registry.register(languages::tact::engine::TactLanguageEngine::new());
-    registry.register(languages::tolk::engine::TolkLanguageEngine::new());
+    registry.register_resolver(languages::func::resolver::FuncLanguageResolver::new());
+    registry.register_resolver(languages::tact::resolver::TactLanguageResolver::new());
+    registry.register_resolver(languages::tolk::resolver::TolkLanguageResolver::new());
 
     // Run the shared main function
     run_main(

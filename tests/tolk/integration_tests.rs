@@ -5,9 +5,10 @@ use crate::utils;
 use mewt::types::{Mutant, Target};
 use mewt::{LanguageEngine, LanguageRegistry};
 use muton::languages::tolk::engine::TolkLanguageEngine;
+use muton::languages::tolk::resolver::TolkLanguageResolver;
 
 pub(crate) fn create_test_target(content: &str) -> (tempfile::TempDir, Target) {
-    utils::target_fixture_for_extension("Tolk", "tolk", content).into_parts()
+    utils::target_fixture_for_extension("tolk", "tolk", content).into_parts()
 }
 
 pub(crate) fn mutants_for_slug(source: &str, slug: &str) -> Vec<Mutant> {
@@ -121,7 +122,7 @@ fun main(): int {
 
     let (_tmp, target) = create_test_target(source);
     let mut registry = LanguageRegistry::new();
-    registry.register(TolkLanguageEngine::new());
+    registry.register_resolver(TolkLanguageResolver::new());
 
     let mutants = target
         .generate_mutants(&registry, None)
@@ -144,8 +145,7 @@ fun main(): int {
 fn engine_reports_expected_metadata_and_slugs() {
     let engine = TolkLanguageEngine::new();
 
-    assert_eq!(engine.name(), "Tolk");
-    assert_eq!(engine.extensions(), &["tolk"]);
+    assert_eq!(engine.language().to_string(), "tolk");
 
     let slugs: BTreeSet<_> = engine.get_mutations().iter().map(|m| m.slug).collect();
 
